@@ -8,23 +8,23 @@
 
 **把一座会呼吸的 3D 微景观鱼缸，静静摆在你的电脑桌面上**
 
-[![Latest Release](https://img.shields.io/github/v/release/happybear1015/desk-oasis?style=flat-square&color=188a7c&label=Release)](https://github.com/happybear1015/desk-oasis/releases/latest)
-[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011%20(x64)-0078D6?style=flat-square)](https://github.com/happybear1015/desk-oasis/releases/latest)
-[![Engine](https://img.shields.io/badge/Engine-Three.js%20WebGL-0f3a3e?style=flat-square)](#核心设计)
-[![Pricing](https://img.shields.io/badge/Base-永久免费-1ea896?style=flat-square)](#版本与权益)
+[![最新版本](https://img.shields.io/github/v/release/happybear1015/desk-oasis?style=flat-square&color=188a7c&label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC)](https://github.com/happybear1015/desk-oasis/releases/latest)
+[![总下载量](https://img.shields.io/github/downloads/happybear1015/desk-oasis/total?style=flat-square&color=0ea5e9&label=%E6%80%BB%E4%B8%8B%E8%BD%BD%E9%87%8F)](https://github.com/happybear1015/desk-oasis/releases)
+[![支持系统](https://img.shields.io/badge/%E6%94%AF%E6%8C%81%E7%B3%BB%E7%BB%9F-Windows%2010%20%2F%2011-0078D6?style=flat-square)](https://github.com/happybear1015/desk-oasis/releases/latest)
+[![基础版](https://img.shields.io/badge/%E5%9F%BA%E7%A1%80%E7%89%88-%E6%B0%B8%E4%B9%85%E5%85%8D%E8%B4%B9-1ea896?style=flat-square)](#版本与权益)
 
 <br />
 
-<img src="./assets/theme-stream.png" alt="DeskOasis 桌面实机渲染" width="640" />
+<img src="./assets/theme-stream.png" alt="DeskOasis 桌面实拍" width="640" />
 
 <br />
 
-[下载 Windows 客户端](https://github.com/happybear1015/desk-oasis/releases/latest) &nbsp;·&nbsp;
-[访问官方网站](https://oasis.goodtools.top) &nbsp;·&nbsp;
+[立即下载 Windows 版](https://github.com/happybear1015/desk-oasis/releases/latest) &nbsp;·&nbsp;
+[官方网站](https://oasis.goodtools.top) &nbsp;·&nbsp;
 [桌面形态](#三种桌面形态) &nbsp;·&nbsp;
-[造景与主鱼皮肤](#四套实机-3d-生态造景) &nbsp;·&nbsp;
-[鱼友串门](#主鱼唯一性与鱼友串门) &nbsp;·&nbsp;
-[手机伴侣](#局域网手机伴侣)
+[造景与鱼皮](#四套-3d-生态造景) &nbsp;·&nbsp;
+[鱼友串门](#鱼友串门与水泡聊天) &nbsp;·&nbsp;
+[手机伴侣](#手机伴侣)
 
 <br />
 
@@ -32,125 +32,134 @@
 
 ---
 
-## 核心设计
+## 产品亮点
 
-**DeskOasis（桌面生态）** 是一款基于 Three.js 实时物理渲染的 Windows 桌面微景观软件。它摒弃了传统桌面宠物的窗口边框与廉价贴图感，专注于克制、写实、零打扰的办公陪伴体验：
-
-- **真正无边框与点击穿透**：无标题栏、无任务栏占位；鱼缸四周透明区域自动点击穿透，丝毫不遮挡背后的代码编辑器、文档或表格。
-- **水密实体 3D 鱼群与物理避障**：逐像素生成珠光鳞片与丝绸鳍条，尾柄与鱼身连续骨骼摆动；内置岩石、沉木 3D 椭球碰撞体积与鱼间体积排斥，游鱼遇石自然绕行、彼此错身避让，绝不穿模。
-- **主鱼唯一性与大鱼串门**：每个鱼缸平时只有 **1 条大鱼（代表你自己）** 与一群伴游宝莲灯小鱼；当你去鱼友家串门时，正是你的这条主大鱼游出缸外、游进对方桌面鱼缸。
-- **原生级极简右键菜单**：深灰磨砂面板搭配单色细线图标，将造景/主鱼换装、桌面形态、鱼友串门与窗口设置清晰归类，随时按 `Ctrl + Alt + M` 一键隐身。
+- **无边框不挡操作**：无标题栏、不占任务栏，透明处可直接点击背后窗口；按 `Ctrl + Alt + M` 一键隐藏。
+- **真实 3D 鱼群**：立体建模与自然摆尾，游鱼遇石头和同伴会自动绕开，不穿模。
+- **一缸一主鱼**：平时缸里只有 **1 条大鱼（你自己）** 和伴游小灯鱼，支持换装；去好友家串门时，也是你的大鱼游过去。
+- **清爽右键菜单**：喂鱼、擦缸、换造景/鱼皮、串门、手机扫码、个人中心全部就地展开，不弹多余窗口。
 
 ---
 
 ## 三种桌面形态
 
-除常驻桌角的透明 3D 鱼缸外，软件支持在三种扩展形态间无缝切换：
+### 1. 桌面漫游（免费）
 
-### 1. 桌面漫游主鱼模式（免费）
-
-将鱼缸拖动至屏幕边缘松手，或右键选择 **「桌面形态 → 放主鱼到桌面自由漫游」**，鱼缸即刻收起，化作**你自己的那条 3D 主大鱼在电脑桌面上自由游动**；左键轻点主鱼即可变回完整鱼缸。
+把鱼缸拖到屏幕边缘松手，小鱼就会直接游到桌面上自由逛街；点一下小鱼变回鱼缸。
 
 <div align="center">
-  <img src="./assets/mode-roam.jpg" alt="桌面漫游主鱼模式实机截图" width="760" />
+  <img src="./assets/mode-roam.jpg" alt="桌面漫游模式" width="760" />
 </div>
 
 <br />
 
-### 2. 桌面动态壁纸 & 最前端巨幕屏保
+### 2. 动态壁纸 & 巨幕屏保
 
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src="./assets/mode-wallpaper.jpg" alt="桌面动态壁纸模式实机截图" width="100%" /><br />
-      <b>桌面动态壁纸模式（嵌入桌面图标后方）</b><br />
-      <sub>通过 Windows WorkerW 挂载于桌面图标层正后方，不遮挡任何桌面图标，<code>Win + D</code> 持久常驻</sub>
+      <img src="./assets/mode-wallpaper.jpg" alt="桌面动态壁纸" width="100%" /><br />
+      <b>桌面动态壁纸</b><br />
+      <sub>铺在桌面图标后方，不挡任何图标，返回桌面始终常驻</sub>
     </td>
     <td align="center" width="50%">
-      <img src="./assets/mode-screensaver.jpg" alt="最前端巨幕屏保模式实机截图" width="100%" /><br />
-      <b>最前端巨幕屏保模式</b><br />
-      <sub>整屏化作无边 3D 水景，支持键鼠闲置 5 分钟自动进入，按 <code>Esc</code> 或移动鼠标即刻恢复工作</sub>
+      <img src="./assets/mode-screensaver.jpg" alt="巨幕屏保" width="100%" /><br />
+      <b>巨幕屏保</b><br />
+      <sub>全屏无边水景，支持闲置 5 分钟自动开启，按 <code>Esc</code> 或移鼠标退出</sub>
     </td>
   </tr>
 </table>
 
 ---
 
-## 四套实机 3D 生态造景
+## 四套 3D 生态造景
 
-以下预览图均为软件内 Three.js WebGL 100% 实机渲染截图，所见即所得。未解锁的造景与主鱼皮肤均支持在软件内**免费试看 15 秒**。
+所有预览图均为软件内实拍截图，未解锁款式支持免费试看 15 秒。
 
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src="./assets/theme-stream.png" alt="原生溪流实机渲染" width="100%" /><br />
-      <b>🌿 原生溪流</b> · <code>免费内置</code><br />
-      <sub>清透青绿水景 · 溪流灰石与沉木 · 原生苦草 · 胡桃木底座（图中主鱼：红白琉金）</sub>
+      <img src="./assets/theme-stream.png" alt="原生溪流" width="100%" /><br />
+      <b>🌿 原生溪流</b> · <code>免费</code><br />
+      <sub>青绿溪水 · 灰石沉木 · 胡桃木底座</sub>
     </td>
     <td align="center" width="50%">
-      <img src="./assets/theme-zen.png" alt="禅意枯山实机渲染" width="100%" /><br />
-      <b>🪨 禅意枯山</b> · <code>PRO 造景</code><br />
-      <sub>冷灰山影水景 · 水下翠竹林与发光石灯笼 · 暗砂 · 哑光黑檀底座（图中主鱼：大正三色锦鲤）</sub>
+      <img src="./assets/theme-zen.png" alt="禅意枯山" width="100%" /><br />
+      <b>🪨 禅意枯山</b> · <code>PRO</code><br />
+      <sub>山影水景 · 翠竹石灯笼 · 哑光黑檀底座</sub>
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <img src="./assets/theme-coral.png" alt="珊瑚深海实机渲染" width="100%" /><br />
-      <b>🪸 珊瑚深海</b> · <code>PRO 造景</code><br />
-      <sub>深海湛蓝光束 · 分叉鹿角珊瑚与发光海葵簇 · 白珊瑚细砂 · 烤漆白底座（图中主鱼：月光龙睛蝶尾）</sub>
+      <img src="./assets/theme-coral.png" alt="珊瑚深海" width="100%" /><br />
+      <b>🪸 珊瑚深海</b> · <code>PRO</code><br />
+      <sub>深海光束 · 鹿角珊瑚与海葵 · 烤漆白底座</sub>
     </td>
     <td align="center" width="50%">
-      <img src="./assets/theme-sakura.png" alt="樱花古风实机渲染" width="100%" /><br />
-      <b>🌸 樱花古风</b> · <code>PRO 造景</code><br />
-      <sub>暖粉霞光水景 · 水下落樱花枝与飘落花瓣 · 玉白细砂 · 浅原木底座（图中主鱼：樱花透明鳞）</sub>
+      <img src="./assets/theme-sakura.png" alt="樱花古风" width="100%" /><br />
+      <b>🌸 樱花古风</b> · <code>PRO</code><br />
+      <sub>暖粉霞光 · 落樱花枝与花瓣 · 浅原木底座</sub>
     </td>
   </tr>
 </table>
 
-### 5 款主鱼（自己）专属 3D 皮肤
+### 5 款主鱼皮肤
 
-鱼缸里唯一的大鱼代表你自己，可在 **「右键菜单 → 造景与鱼皮」** 或商城中随时换装（漫游桌面与去好友家串门时同步展示你的主鱼皮肤）：
+右键 **「造景与鱼皮 → 主鱼皮肤」** 可预览图案并换装，漫游桌面与串门时同步生效：
 
-| 主鱼皮肤 | 体态与纹理特征 | 获取方式 |
+| 主鱼皮肤 | 外观特色 | 获取方式 |
 | :--- | :--- | :--- |
-| **🐟 红白琉金** | 经典红白花纹 · 飘逸双开纱尾 · 温润珠光鳞片 | 免费内置 |
-| **🎏 大正三色锦鲤** | 雪白瓷底配绯红丹顶与乌墨斑 · 修长锦鲤体态 | 单品解锁 / PRO 全解锁包 |
-| **🦋 月光龙睛蝶尾** | 冰透银白配流金背脊 · 宽大丝绸蝴蝶双尾 | 单品解锁 / PRO 全解锁包 |
-| **🖤 墨玉麒麟兰寿** | 玄黑丝绒背脊与古铜金鳞网纹 · 圆润饱满体态 | 单品解锁 / PRO 全解锁包 |
-| **🌸 樱花透明鳞** | 粉白半透玉肌 · 浅绯樱瓣散斑 · 灵动长尾 | 单品解锁 / PRO 全解锁包 |
+| **🐟 红白琉金** | 红白花纹 · 飘逸双尾 | 免费内置 |
+| **🎏 大正三色锦鲤** | 雪白底色配红黑斑纹 | 单买 / PRO 全解锁 |
+| **🦋 月光龙睛蝶尾** | 冰透银白 · 丝绸蝶尾 | 单买 / PRO 全解锁 |
+| **🖤 墨玉麒麟兰寿** | 玄黑背脊 · 古铜金鳞 | 单买 / PRO 全解锁 |
+| **🌸 樱花透明鳞** | 粉白透肌 · 樱瓣散斑 | 单买 / PRO 全解锁 |
 
 ---
 
-## 主鱼唯一性与鱼友串门
+## 鱼友串门与水泡聊天
 
-- **一缸一主鱼**：没有朋友来串门时，你的鱼缸里只有 **1 条大鱼（你自己）** 和伴游小灯鱼群。
-- **真·大鱼串门**：在 `右键菜单 → 鱼友串门` 中输入好友 ID（`DO-XXXXXX`）互加鱼友。点击 **「串门」**，你的主大鱼会从鱼缸侧壁游出，跨越网络实时游进对方的桌面鱼缸（同时可点击 **「看缸」** 观光对方鱼缸的造景与两人的主鱼同游）。
-- **水泡消息（24h 阅后即消）**：点击缸内来访的好友大鱼或头顶铭牌，即可发送 20 字以内的水下气泡文字、戳一戳、帮忙喂鱼或放水下纸飞机。所有消息仅在服务端内存临时中转，从不落盘。
+- **跨桌面串门**：在 `右键 → 鱼友串门` 互换 ID 添加好友。对方开鱼缸时，你的主鱼会游进对方鱼缸；对方在桌面逛街时，你的主鱼也会一起在对方桌面上自由逛。
+- **实时观光**：串门时点「看缸 / 同屏看」，可实时查看对方桌面或鱼缸画面。
+- **水泡消息**：点好友大鱼即可发送 20 字内水泡消息、戳一戳、帮忙喂鱼；消息阅后即消，不留记录。
 
 ---
 
-## 局域网手机伴侣
+## 手机伴侣
 
-右键鱼缸选择 **「手机伴侣」**，用手机浏览器在同一 Wi-Fi 下扫码即连（免安装 App）：
+右键选择 **「手机伴侣」**，同一 Wi-Fi 下手机扫码即连，免装 App：
 
-- **同款 3D 实时鱼缸 & 画中画悬浮窗**：手机端同步渲染你的鱼缸、主鱼皮肤与来访鱼友，支持开启系统级画中画（PiP）悬浮窗。
-- **远程互动与孵化鱼卵**：远程投喂、擦拭玻璃青苔、开关缸灯、一键孵化主鱼产下的微光鱼卵。
-- **本地私密算薪与战报**：实时入账与洗手间计时**仅保存在手机浏览器本地 `localStorage`**，绝不上传服务器，也绝不显示在电脑屏幕上。
+- 手机同步查看 3D 鱼缸，支持画中画悬浮窗
+- 远程喂鱼、擦玻璃、开关灯、孵化鱼卵
+- 手机端计时与薪资小工具仅存手机本地，不上传、不显示在电脑屏幕
 
 ---
 
 ## 版本与权益
 
-软件支持**单品按需选购**或**一口价终身全解锁**（已单买过任意单品的用户升级 PRO 全解锁时**自动按比例抵扣补差价**）：
+支持按需单买，或一口价 PRO 终身全解锁（已单买项升级 PRO 时自动抵扣差价）：
 
-| 权益方案 | 包含内容 | 说明 |
-| :--- | :--- | :--- |
-| **基础版（永久免费）** | 🌿 原生溪流造景 + 🐟 红白琉金主鱼 + 桌面漫游 + 手机伴侣 + 鱼友串门 | 零广告、无功能时间限制 |
-| **💎 PRO 终身买断（全解锁）** | **全部 4 套 3D 造景 + 全部 5 款主鱼皮肤 + 动态壁纸与巨幕屏保** | 一次买断永久有效，已购单品自动抵扣补差 |
-| **单品任选解锁** | 单套 PRO 造景 / 单款主鱼皮肤 / 动态壁纸与巨幕屏保 | 按需单独购买，支付宝秒解锁或兑换码通用 |
+| 方案 | 包含内容 |
+| :--- | :--- |
+| **基础版（永久免费）** | 原生溪流造景 + 红白琉金主鱼 + 桌面漫游 + 鱼友串门 + 手机伴侣 |
+| **💎 PRO 终身全解锁** | 全部 4 套造景 + 全部 5 款主鱼皮肤 + 动态壁纸与巨幕屏保 |
+| **单品解锁** | 任选单套造景 / 单款鱼皮 / 壁纸屏保 |
+
+---
+
+## 常用操作
+
+| 操作 | 效果 |
+| :--- | :--- |
+| **左键拖动鱼缸** | 自由摆放；拖到屏幕边缘进入桌面漫游 |
+| **左键单击** | 敲玻璃 / 点好友鱼发水泡 / 漫游时点主鱼变回鱼缸 |
+| **Ctrl + 滚轮** | 缩放鱼缸大小 |
+| **右键鱼缸 / 托盘** | 打开快捷菜单 |
+| **`Ctrl + Alt + M`** | 一键隐藏 / 恢复鱼缸 |
+| **`Ctrl + Alt + W`** | 退出动态壁纸 |
 
 ---
 
 <div align="center">
-  <sub>如果这座桌边小鱼缸陪伴了你的工作时光，欢迎点亮右上角的 <b>⭐ Star</b> 支持项目持续迭代。</sub>
+  <sub>如果这座桌边小鱼缸陪伴了你的日常，欢迎点亮右上角的 <b>⭐ Star</b> 支持！</sub>
 </div>
