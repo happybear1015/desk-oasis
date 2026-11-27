@@ -1,0 +1,156 @@
+name: Build & Upload iOS App Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload_to_appstore:
+        description: "签名完成后自动直推 TestFlight / App Store Connect"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+      build_number:
+        description: "构建号 CFBundleVersion（留空则自动用 GitHub run_number）"
+        required: false
+        default: ""
+
+jobs:
+  build-ios:
+    name: Build DeskOasis iOS (macOS + Xcode + StoreKit 2)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    env:
+      IOS_CERT_P12_BASE64: ${{ secrets.IOS_CERT_P12_BASE64 }}
+      IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+      IOS_PROVISION_PROFILE_BASE64: ${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+      APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+      APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+
+    steps:
+      - name: Checkout ios-bundle branch
+        uses: actions/checkout@v4
+        with:
+          ref: ios-bundle
+
+      - name: Generate Xcode project via XcodeGen
+        run: |
+          if ! command -v xcodegen >/dev/null 2>&1; then
+            brew install xcodegen
+          fi
+          cd ios
+          xcodegen generate
+
+      - name: Determine signing mode & build number
+        id: mode
+        run: |
+          BUILD_NUM="${{ github.event.inputs.build_number }}"
+          if [ -z "$BUILD_NUM" ]; then
+            BUILD_NUM="${{ github.run_number }}"
+          fi
+          echo "build_number=$BUILD_NUM" >> "$GITHUB_OUTPUT"
+          if [ -n "$IOS_CERT_P12_BASE64" ] && [ -n "$IOS_PROVISION_PROFILE_BASE64" ] && [ -n "$APPLE_TEAM_ID" ]; then
+            echo "signed=true" >> "$GITHUB_OUTPUT"
+            echo "已检测到苹果发布证书与描述文件，将执行正式 IPA 归档签名。"
+          else
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            echo "未配置签名密钥，执行 Xcode Release 编译校验（验证 Swift + StoreKit 2 + WebBundle 零错误）。"
+          fi
+
+      - name: Verify Xcode Release build (Unsigned CI check)
+        if: steps.mode.outputs.signed == 'false'
+        run: |
+          xcodebuild \
+            -project ios/DeskOasis.xcodeproj \
+            -scheme DeskOasis \
+            -sdk iphonesimulator \
+            -configuration Release \
+            CURRENT_PROJECT_VERSION="${{ steps.mode.outputs.build_number }}" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Install Apple Distribution Certificate & Provisioning Profile
+        if: steps.mode.outputs.signed == 'true'
+        run: |
+          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+          KEYCHAIN_PASS="$(uuidgen)"
+          CERT_PATH="$RUNNER_TEMP/dist.p12"
+          PP_PATH="$RUNNER_TEMP/profile.mobileprovision"
+
+          echo -n "$IOS_CERT_P12_BASE64" | base64 --decode -o "$CERT_PATH"
+          echo -n "$IOS_PROVISION_PROFILE_BASE64" | base64 --decode -o "$PP_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$IOS_CERT_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
+
+          PP_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" /dev/stdin <<< "$(/usr/bin/security cms -D -i "$PP_PATH")")
+          PP_NAME=$(/usr/libexec/PlistBuddy -c "Print Name" /dev/stdin <<< "$(/usr/bin/security cms -D -i "$PP_PATH")")
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$PP_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/$PP_UUID.mobileprovision"
+
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>teamID</key>
+            <string>${APPLE_TEAM_ID}</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>uploadSymbols</key>
+            <true/>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.deskoasis.app</key>
+              <string>${PP_NAME}</string>
+            </dict>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Archive & Export Signed App Store IPA
+        if: steps.mode.outputs.signed == 'true'
+        run: |
+          PP_NAME=$(/usr/libexec/PlistBuddy -c "Print :provisioningProfiles:com.deskoasis.app" "$RUNNER_TEMP/ExportOptions.plist")
+          xcodebuild \
+            -project ios/DeskOasis.xcodeproj \
+            -scheme DeskOasis \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath "$RUNNER_TEMP/DeskOasis.xcarchive" \
+            CURRENT_PROJECT_VERSION="${{ steps.mode.outputs.build_number }}" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$PP_NAME" \
+            archive
+
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/DeskOasis.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/export"
+
+      - name: Upload to TestFlight / App Store Connect
+        if: steps.mode.outputs.signed == 'true' && github.event.inputs.upload_to_appstore != 'false' && env.APPSTORE_KEY_ID != '' && env.APPSTORE_ISSUER_ID != '' && env.APPSTORE_PRIVATE_KEY != ''
+        run: |
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          KEY_FILE="$HOME/.appstoreconnect/private_keys/AuthKey_${APPSTORE_KEY_ID}.p8"
+          printf "%s\n" "$APPSTORE_PRIVATE_KEY" > "$KEY_FILE"
+          IPA_FILE=$(ls "$RUNNER_TEMP"/export/*.ipa | head -n 1)
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$IPA_FILE" \
+            --apiKey "$APPSTORE_KEY_ID" \
+            --apiIssuer "$APPSTORE_ISSUER_ID"
+          rm -f "$KEY_FILE"
