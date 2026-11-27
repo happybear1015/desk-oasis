@@ -54,10 +54,10 @@ jobs:
           echo "build_number=$BUILD_NUM" >> "$GITHUB_OUTPUT"
           if [ -n "$IOS_CERT_P12_BASE64" ] && [ -n "$IOS_PROVISION_PROFILE_BASE64" ] && [ -n "$APPLE_TEAM_ID" ]; then
             echo "signed=true" >> "$GITHUB_OUTPUT"
-            echo "已检测到苹果发布证书与描述文件，将执行正式 IPA 归档签名。"
+            echo "已检测到苹果发布证书与描述文件，将执行正式真机 IPA 归档签名。"
           else
             echo "signed=false" >> "$GITHUB_OUTPUT"
-            echo "未配置签名密钥，执行 Xcode Release 编译校验（验证 Swift + StoreKit 2 + WebBundle 零错误）。"
+            echo "未配置签名密钥，执行模拟器编译校验。"
           fi
 
       - name: Verify Xcode Release build (Unsigned CI check)
@@ -92,32 +92,13 @@ jobs:
 
           PP_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" /dev/stdin <<< "$(/usr/bin/security cms -D -i "$PP_PATH")")
           PP_NAME=$(/usr/libexec/PlistBuddy -c "Print Name" /dev/stdin <<< "$(/usr/bin/security cms -D -i "$PP_PATH")")
-          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          cp "$PP_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/$PP_UUID.mobileprovision"
 
-          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-            <key>method</key>
-            <string>app-store-connect</string>
-            <key>teamID</key>
-            <string>${APPLE_TEAM_ID}</string>
-            <key>signingStyle</key>
-            <string>manual</string>
-            <key>stripSwiftSymbols</key>
-            <true/>
-            <key>uploadSymbols</key>
-            <true/>
-            <key>provisioningProfiles</key>
-            <dict>
-              <key>com.deskoasis.app</key>
-              <string>${PP_NAME}</string>
-            </dict>
-          </dict>
-          </plist>
-          EOF
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+          cp "$PP_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/$PP_UUID.mobileprovision"
+          cp "$PP_PATH" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/$PP_UUID.mobileprovision"
+
+          python3 -c 'import plistlib, sys; plistlib.dump({"method":"app-store-connect","teamID":sys.argv[2],"signingStyle":"manual","stripSwiftSymbols":True,"uploadSymbols":True,"provisioningProfiles":{"com.deskoasis.app":sys.argv[3]}}, open(sys.argv[1],"wb"))' "$RUNNER_TEMP/ExportOptions.plist" "$APPLE_TEAM_ID" "$PP_NAME"
 
       - name: Archive & Export Signed App Store IPA
         if: steps.mode.outputs.signed == 'true'
@@ -140,6 +121,8 @@ jobs:
             -archivePath "$RUNNER_TEMP/DeskOasis.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
             -exportPath "$RUNNER_TEMP/export"
+
+          ls -lh "$RUNNER_TEMP/export/"*.ipa
 
       - name: Upload to TestFlight / App Store Connect
         if: steps.mode.outputs.signed == 'true' && github.event.inputs.upload_to_appstore != 'false' && env.APPSTORE_KEY_ID != '' && env.APPSTORE_ISSUER_ID != '' && env.APPSTORE_PRIVATE_KEY != ''
