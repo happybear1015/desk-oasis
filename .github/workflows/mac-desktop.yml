@@ -1,0 +1,54 @@
+name: Build macOS Desktop DMG
+
+on:
+  workflow_dispatch:
+    inputs:
+      arch:
+        description: "目标架构（both=双架构 / arm64=M芯片 / x64=Intel）"
+        required: false
+        default: "both"
+        type: choice
+        options:
+          - "both"
+          - "arm64"
+          - "x64"
+
+jobs:
+  build-mac:
+    name: Build DeskOasis macOS (.dmg)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout mac-bundle branch
+        uses: actions/checkout@v4
+        with:
+          ref: mac-bundle
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build macOS DMG (Apple Silicon + Intel)
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: |
+          ARCH="${{ github.event.inputs.arch || 'both' }}"
+          if [ "$ARCH" = "arm64" ]; then
+            npx electron-builder --mac dmg --arm64 --publish never
+          elif [ "$ARCH" = "x64" ]; then
+            npx electron-builder --mac dmg --x64 --publish never
+          else
+            npx electron-builder --mac dmg --arm64 --x64 --publish never
+          fi
+          ls -lh release/*.dmg
+
+      - name: Upload macOS DMG artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DeskOasis-macOS-DMG
+          path: release/*.dmg
+          retention-days: 30
