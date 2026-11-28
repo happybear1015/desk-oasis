@@ -12,12 +12,30 @@ on:
           - "both"
           - "arm64"
           - "x64"
+      publish_release:
+        description: "公证完成后自动上传至 GitHub Releases"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: write
 
 jobs:
   build-mac:
-    name: Build DeskOasis macOS (.dmg)
+    name: Build, Sign & Notarize DeskOasis macOS (.dmg)
     runs-on: macos-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
+    env:
+      CSC_LINK: ${{ secrets.MAC_DEV_ID_P12_BASE64 }}
+      CSC_KEY_PASSWORD: ${{ secrets.MAC_DEV_ID_PASSWORD }}
+      APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+      APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+      APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout mac-bundle branch
         uses: actions/checkout@v4
@@ -32,9 +50,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build macOS DMG (Apple Silicon + Intel)
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      - name: Build & Sign macOS DMG (Developer ID Application + Hardened Runtime)
         run: |
           ARCH="${{ github.event.inputs.arch || 'both' }}"
           if [ "$ARCH" = "arm64" ]; then
@@ -45,6 +61,36 @@ jobs:
             npx electron-builder --mac dmg --arm64 --x64 --publish never
           fi
           ls -lh release/*.dmg
+
+      - name: Notarize & Staple DMG with Apple Notary Service
+        if: env.APPSTORE_KEY_ID != '' && env.APPSTORE_ISSUER_ID != '' && env.APPSTORE_PRIVATE_KEY != '' && env.CSC_LINK != ''
+        run: |
+          KEY_FILE="$RUNNER_TEMP/AuthKey_${APPSTORE_KEY_ID}.p8"
+          printf "%s\n" "$APPSTORE_PRIVATE_KEY" > "$KEY_FILE"
+          for dmg in release/*.dmg; do
+            echo ">>> Submitting $dmg to Apple Notarization..."
+            xcrun notarytool submit "$dmg" \
+              --key "$KEY_FILE" \
+              --key-id "$APPSTORE_KEY_ID" \
+              --issuer "$APPSTORE_ISSUER_ID" \
+              --wait
+            echo ">>> Stapling notarization ticket to $dmg..."
+            xcrun stapler staple "$dmg"
+            xcrun stapler validate "$dmg"
+            spctl -a -t open --context context:primary-signature -v "$dmg"
+          done
+          rm -f "$KEY_FILE"
+
+      - name: Upload signed & notarized DMG to GitHub Release
+        if: github.event.inputs.publish_release != 'false'
+        run: |
+          VER=$(node -p "require('./package.json').version")
+          TAG="v${VER}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" release/*.dmg --clobber
+          else
+            gh release create "$TAG" release/*.dmg --title "DeskOasis ${TAG}" --notes "桌面生态 ${TAG}（macOS Apple Silicon + Intel 已签名公证）"
+          fi
 
       - name: Upload macOS DMG artifacts
         uses: actions/upload-artifact@v4
