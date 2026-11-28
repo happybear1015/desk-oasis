@@ -1,0 +1,62 @@
+name: DeskOasis
+options:
+  bundleIdPrefix: com.deskoasis
+  deploymentTarget:
+    iOS: "15.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "1.4.10"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+
+targets:
+  DeskOasis:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: OasisApp
+        excludes:
+          - "WebBundle/**"
+      - path: OasisApp/WebBundle
+        type: folder
+    info:
+      path: OasisApp/Info.plist
+      properties:
+        CFBundleDisplayName: 桌面生态
+        CFBundleName: DeskOasis
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSRequiresIPhoneOS: true
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UIStatusBarStyle: UIStatusBarStyleLightContent
+        UIViewControllerBasedStatusBarAppearance: true
+        ITSAppUsesNonExemptEncryption: false
+        UIBackgroundModes:
+          - audio
+        NSFaceIDUsageDescription: 用于解锁桌面生态锁屏屏保模式，保护您的屏幕隐私
+        NSPhotoLibraryAddUsageDescription: 用于将 3D 鱼缸高清壁纸保存至系统相册，方便设为锁屏或桌面壁纸
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.deskoasis.app
+        PRODUCT_NAME: DeskOasis
+        INFOPLIST_FILE: OasisApp/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Automatic
+    scheme:
+      storeKitConfiguration: Oasis.storekit

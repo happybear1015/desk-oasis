@@ -1,0 +1,331 @@
+{
+  "identifier": "D8A1473B",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "15",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_01",
+      "localizations": [
+        {
+          "description": "包含全部 8 套 3D 造景、11 款主鱼皮肤、锁屏屏保、动态壁纸、桌面漫游、多屏畅游及主鱼轻成长",
+          "displayName": "PRO 终身买断",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.pro_all",
+      "referenceName": "PRO 终身买断",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "6",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_02",
+      "localizations": [
+        {
+          "description": "永久解锁「纪念碑云城（造景）」，支持多设备云同步",
+          "displayName": "纪念碑云城（造景）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.castle",
+      "referenceName": "纪念碑云城（造景）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "6",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_03",
+      "localizations": [
+        {
+          "description": "永久解锁「极光星环（造景）」，支持多设备云同步",
+          "displayName": "极光星环（造景）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.starry",
+      "referenceName": "极光星环（造景）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "6",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_04",
+      "localizations": [
+        {
+          "description": "永久解锁「京都苔庭（造景）」，支持多设备云同步",
+          "displayName": "京都苔庭（造景）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.matcha",
+      "referenceName": "京都苔庭（造景）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "6",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_05",
+      "localizations": [
+        {
+          "description": "永久解锁「禅意枯山（造景）」，支持多设备云同步",
+          "displayName": "禅意枯山（造景）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.zen",
+      "referenceName": "禅意枯山（造景）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "6",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_06",
+      "localizations": [
+        {
+          "description": "永久解锁「深海珊瑚（造景）」，支持多设备云同步",
+          "displayName": "深海珊瑚（造景）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.coral",
+      "referenceName": "深海珊瑚（造景）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "6",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_07",
+      "localizations": [
+        {
+          "description": "永久解锁「落樱浅溪（造景）」，支持多设备云同步",
+          "displayName": "落樱浅溪（造景）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.sakura",
+      "referenceName": "落樱浅溪（造景）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_08",
+      "localizations": [
+        {
+          "description": "永久解锁「奶油河豚（鱼皮）」，支持多设备云同步",
+          "displayName": "奶油河豚（鱼皮）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.puffer_cute",
+      "referenceName": "奶油河豚（鱼皮）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_09",
+      "localizations": [
+        {
+          "description": "永久解锁「桃粉琉璃鱼（鱼皮）」，支持多设备云同步",
+          "displayName": "桃粉琉璃鱼（鱼皮）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.bubble_pink",
+      "referenceName": "桃粉琉璃鱼（鱼皮）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_10",
+      "localizations": [
+        {
+          "description": "永久解锁「星海蓝灵（鱼皮）」，支持多设备云同步",
+          "displayName": "星海蓝灵（鱼皮）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.star_blue",
+      "referenceName": "星海蓝灵（鱼皮）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_11",
+      "localizations": [
+        {
+          "description": "永久解锁「薄荷幼鲸（鱼皮）」，支持多设备云同步",
+          "displayName": "薄荷幼鲸（鱼皮）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.whale_mint",
+      "referenceName": "薄荷幼鲸（鱼皮）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_12",
+      "localizations": [
+        {
+          "description": "永久解锁「暮紫星羽（鱼皮）」，支持多设备云同步",
+          "displayName": "暮紫星羽（鱼皮）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.cyber_cat",
+      "referenceName": "暮紫星羽（鱼皮）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_13",
+      "localizations": [
+        {
+          "description": "永久解锁「昭和三色锦鲤（鱼皮）」，支持多设备云同步",
+          "displayName": "昭和三色锦鲤（鱼皮）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.koi",
+      "referenceName": "昭和三色锦鲤（鱼皮）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_14",
+      "localizations": [
+        {
+          "description": "永久解锁「月光蝶尾（鱼皮）」，支持多设备云同步",
+          "displayName": "月光蝶尾（鱼皮）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.butterfly",
+      "referenceName": "月光蝶尾（鱼皮）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_15",
+      "localizations": [
+        {
+          "description": "永久解锁「黑金兰寿（鱼皮）」，支持多设备云同步",
+          "displayName": "黑金兰寿（鱼皮）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.ranchu",
+      "referenceName": "黑金兰寿（鱼皮）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_16",
+      "localizations": [
+        {
+          "description": "永久解锁「绯樱透明鳞（鱼皮）」，支持多设备云同步",
+          "displayName": "绯樱透明鳞（鱼皮）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.sakura_gold",
+      "referenceName": "绯樱透明鳞（鱼皮）",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_17",
+      "localizations": [
+        {
+          "description": "永久解锁「锁屏屏保」，支持多设备云同步",
+          "displayName": "锁屏屏保",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.screensaver",
+      "referenceName": "锁屏屏保",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_18",
+      "localizations": [
+        {
+          "description": "永久解锁「桌面动态壁纸」，支持多设备云同步",
+          "displayName": "桌面动态壁纸",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.wallpaper",
+      "referenceName": "桌面动态壁纸",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_19",
+      "localizations": [
+        {
+          "description": "永久解锁「桌面漫游不限时」，支持多设备云同步",
+          "displayName": "桌面漫游不限时",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.roam",
+      "referenceName": "桌面漫游不限时",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_20",
+      "localizations": [
+        {
+          "description": "永久解锁「多屏跨屏畅游」，支持多设备云同步",
+          "displayName": "多屏跨屏畅游",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.multiscreen",
+      "referenceName": "多屏跨屏畅游",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "OASIS_SKU_21",
+      "localizations": [
+        {
+          "description": "永久解锁「主鱼治愈轻成长」，支持多设备云同步",
+          "displayName": "主鱼治愈轻成长",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "com.deskoasis.app.sku.growth",
+      "referenceName": "主鱼治愈轻成长",
+      "type": "NonConsumable"
+    }
+  ],
+  "settings": {
+    "_applicationInternalID": "6730000001",
+    "_developerTeamID": "DESKOASIS1",
+    "_lastSynchronizedDate": 754387200
+  },
+  "subscriptionGroups": [],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}
