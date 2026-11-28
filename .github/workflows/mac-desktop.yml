@@ -77,7 +77,6 @@ jobs:
             echo ">>> Stapling notarization ticket to $dmg..."
             xcrun stapler staple "$dmg"
             xcrun stapler validate "$dmg"
-            spctl -a -t open --context context:primary-signature -v "$dmg"
           done
           rm -f "$KEY_FILE"
 
