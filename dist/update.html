@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>发现新版本 · 桌面生态</title>
+  <style>
+    .notes {
+      flex: 1; padding: 10px 12px; border-radius: 9px;
+      background: #09090b;
+      border: 1px solid var(--border);
+      font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; color: #d4d4d8;
+    }
+    .prog-wrap { height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+    .prog-bar { height: 100%; width: 0%; background: #fafafa; transition: width 0.2s ease; }
+    .row .btn { flex: 1; }
+    .skip { background: none; border: none; font-size: 11.5px; color: var(--fg-dim); text-decoration: underline; align-self: center; }
+  </style>
+  <script type="module" crossorigin src="./assets/update-CRvciESM.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="stylesheet" crossorigin href="./assets/dialog-DA0NrzqE.css">
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <img class="mark" src="./icons/mark.svg" alt="">
+      <span class="title">发现新版本</span>
+      <span class="badge" id="badge">建议升级</span>
+    </div>
+    <div class="sub" id="verText">正在读取版本信息…</div>
+    <div class="notes scroll" id="notes"></div>
+    <div class="prog-wrap" id="progWrap" hidden><div class="prog-bar" id="progBar"></div></div>
+    <div class="tip" id="status"></div>
+    <div class="row">
+      <button class="btn ghost" id="laterBtn">稍后再说</button>
+      <button class="btn" id="startBtn">立即升级</button>
+    </div>
+    <button class="skip" id="skipBtn">跳过此版本</button>
+  </div>
+</body>
+</html>

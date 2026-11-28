@@ -1,0 +1,52 @@
+{
+  "brand": {
+    "name": "桌面生态",
+    "en": "DeskOasis",
+    "slogan": "把一座会呼吸的 3D 微景观鱼缸，静静摆在你的桌面上",
+    "site": "https://oasis.goodtools.top",
+    "repo": "happybear1015/desk-oasis",
+    "appleBundleId": "com.deskoasis.app",
+    "appleSkuPrefix": "com.deskoasis.app.sku."
+  },
+  "themes": [
+    { "id": "stream", "name": "原生溪流", "emoji": "", "style": "real", "cents": 0, "desc": "超白水晶缸 · 青苍溪石与沉木水草" },
+    { "id": "candy", "name": "幻彩珍珠礁", "emoji": "", "style": "cartoon", "cents": 0, "desc": "潮玩微景 · 磨砂琉璃珊瑚与柔光珍珠" },
+    { "id": "castle", "name": "纪念碑云城", "emoji": "", "style": "cartoon", "cents": 600, "desc": "潮玩微景 · 极简几何拱门与暖光尖塔" },
+    { "id": "starry", "name": "极光星环", "emoji": "", "style": "cartoon", "cents": 600, "desc": "潮玩微景 · 弦月浮雕、星环与透光晶簇" },
+    { "id": "matcha", "name": "京都苔庭", "emoji": "", "style": "cartoon", "cents": 600, "desc": "潮玩微景 · 弧形木桥、白砂卵石与浮水睡莲" },
+    { "id": "zen", "name": "禅意枯山", "emoji": "", "style": "real", "cents": 600, "desc": "自然水景 · 苍劲青竹、玄武暗岩与石灯" },
+    { "id": "coral", "name": "深海珊瑚", "emoji": "", "style": "real", "cents": 600, "desc": "自然水景 · 鹿角珊瑚礁与微光海葵" },
+    { "id": "sakura", "name": "落樱浅溪", "emoji": "", "style": "real", "cents": 600, "desc": "自然水景 · 水下绯樱枝与随波花瓣" }
+  ],
+  "skins": [
+    { "id": "goldfish", "name": "丹霞琉金", "emoji": "", "style": "real", "cents": 0, "desc": "自然系 · 朱红素白渐变飘逸双尾" },
+    { "id": "clown_cute", "name": "珊瑚小丑鱼", "emoji": "", "style": "cartoon", "cents": 0, "desc": "潮玩系 · 暖橘瓷白三道纹圆润萌鱼" },
+    { "id": "puffer_cute", "name": "奶油河豚", "emoji": "", "style": "cartoon", "cents": 300, "desc": "潮玩系 · 饱满奶黄圆团与透亮薄鳍" },
+    { "id": "bubble_pink", "name": "桃粉琉璃鱼", "emoji": "", "style": "cartoon", "cents": 300, "desc": "潮玩系 · 蜜桃粉雾渐变丝绸长尾" },
+    { "id": "star_blue", "name": "星海蓝灵", "emoji": "", "style": "cartoon", "cents": 300, "desc": "潮玩系 · 晴空钴蓝配流金星芒长纱" },
+    { "id": "whale_mint", "name": "薄荷幼鲸", "emoji": "", "style": "cartoon", "cents": 300, "desc": "潮玩系 · 冰川薄荷蓝与水平舒展尾翼" },
+    { "id": "cyber_cat", "name": "暮紫星羽", "emoji": "", "style": "cartoon", "cents": 300, "desc": "潮玩系 · 鸢尾暮紫渐变柔光宽幅蝶尾" },
+    { "id": "koi", "name": "昭和三色锦鲤", "emoji": "", "style": "real", "cents": 300, "desc": "自然系 · 瓷白底鳞配绯红丹顶墨斑" },
+    { "id": "butterfly", "name": "月光蝶尾", "emoji": "", "style": "real", "cents": 300, "desc": "自然系 · 冰透银白配流金丝绸大尾" },
+    { "id": "ranchu", "name": "黑金兰寿", "emoji": "", "style": "real", "cents": 300, "desc": "自然系 · 玄黑丝绒背脊与古铜金腹" },
+    { "id": "sakura_gold", "name": "绯樱透明鳞", "emoji": "", "style": "real", "cents": 300, "desc": "自然系 · 粉白半透珠光樱瓣散斑" }
+  ],
+  "features": [
+    { "id": "screensaver", "name": "锁屏屏保", "emoji": "", "cents": 300, "desc": "自定义闲置与锁屏时长大时钟屏保（每日体验 20 分钟）" },
+    { "id": "wallpaper", "name": "桌面动态壁纸", "emoji": "", "cents": 300, "desc": "嵌入桌面图标后方的 3D 动态水景壁纸（每日体验 20 分钟）" },
+    { "id": "roam", "name": "桌面漫游不限时", "emoji": "", "cents": 300, "desc": "主鱼跃出鱼缸在桌面自由游动不限时（每日体验 20 分钟）" },
+    { "id": "multiscreen", "name": "多屏跨屏畅游", "emoji": "", "cents": 300, "desc": "多显示器无缝跨屏漫游与多屏联动锁屏屏保（每日体验 20 分钟）" },
+    { "id": "growth", "name": "主鱼治愈轻成长", "emoji": "", "cents": 300, "desc": "喂食陪伴让主鱼舒展成长并解锁灵动光晕（支持锁定体型，每日体验 20 分钟）" }
+  ],
+  "bundle": {
+    "id": "pro-all",
+    "name": "PRO 终身买断",
+    "cents": 1500,
+    "themes": ["castle", "starry", "matcha", "zen", "coral", "sakura"],
+    "skins": ["puffer_cute", "bubble_pink", "star_blue", "whale_mint", "cyber_cat", "koi", "butterfly", "ranchu", "sakura_gold"],
+    "features": ["screensaver", "wallpaper", "roam", "multiscreen", "growth"],
+    "desc": "包含全部 8 套 3D 造景、11 款主鱼皮肤、锁屏屏保、动态壁纸、桌面漫游、多屏畅游及主鱼轻成长"
+  },
+  "previewSeconds": 15,
+  "featureTrialMinutes": 20
+}

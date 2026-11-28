@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="./icons/mark.svg">
+  <title>桌面生态 · 运营后台</title>
+  <script type="module" crossorigin src="./assets/admin-BJUt7Hww.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="stylesheet" crossorigin href="./assets/admin-BWqOvt8I.css">
+</head>
+<body>
+  <form class="login" id="login">
+    <img src="./icons/mark.svg" alt="" width="44" height="44">
+    <h1>桌面生态 · 运营后台</h1>
+    <input type="password" id="tokenInput" placeholder="管理员令牌（服务端 ADMIN_TOKEN）" autocomplete="current-password" required>
+    <button class="btn" type="submit">进入</button>
+    <p class="err" id="loginErr"></p>
+  </form>
+
+  <div class="wrap" id="app" hidden>
+    <header class="top">
+      <div class="brand"><img src="./icons/mark.svg" alt="" width="26" height="26"><h1>桌面生态 · 运营后台</h1></div>
+      <div class="row">
+        <span class="muted" id="refreshedAt"></span>
+        <button class="btn ghost" id="refreshBtn">刷新</button>
+        <button class="btn ghost" id="logoutBtn">退出</button>
+      </div>
+    </header>
+
+    <section class="stats" id="stats"></section>
+
+    <nav class="tabs" id="tabs">
+      <button data-tab="pricing" class="on">商品与定价</button>
+      <button data-tab="sell">开通与卡密</button>
+      <button data-tab="orders">订单</button>
+      <button data-tab="release">版本发布</button>
+      <button data-tab="feedback">用户反馈</button>
+      <button data-tab="users">用户</button>
+    </nav>
+
+    <section class="panel" data-pane="pricing">
+      <div class="box">
+        <div class="row" style="justify-content:space-between;align-items:center;">
+          <div>
+            <h2>全渠道商品价格配置（实时同步官网、桌面端、右键菜单与手机伴侣）</h2>
+            <p class="muted">所有展示价格统一由此处管理。设为 0 元即对全员限时免费；保存后通过 SSE 秒级推送至所有在线客户端。</p>
+          </div>
+          <div class="row">
+            <button class="btn ghost" type="button" id="resetPricingBtn">恢复默认价</button>
+            <button class="btn" type="submit" form="pricingForm">保存并全网生效</button>
+          </div>
+        </div>
+        <form id="pricingForm" style="display:flex;flex-direction:column;gap:14px;margin-top:6px;">
+          <div id="pricingFields" style="display:flex;flex-direction:column;gap:14px;"></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel" data-pane="sell" hidden>
+      <div class="cols">
+        <form class="box" id="grantForm">
+          <h2>按用户 ID 直接开通</h2>
+          <p class="muted">买家在软件「造景商城 → 账号与隐私」里复制用户 ID 发给你。</p>
+          <div class="row">
+            <input id="grantUid" placeholder="DO-9A3F21" required pattern="[Dd][Oo]-[0-9A-Fa-f]{6,12}">
+            <select id="grantSku" data-skus></select>
+            <select id="grantChannel"><option>闲鱼</option><option>小红书</option><option>微信</option><option>其他</option></select>
+          </div>
+          <div class="row"><input id="grantNote" class="grow" placeholder="备注（买家昵称 / 订单号）" maxlength="80"><button class="btn">立即开通</button></div>
+        </form>
+        <form class="box" id="codeForm">
+          <h2>生成兑换码</h2>
+          <p class="muted">一码一用，买家在电脑商城或手机伴侣里输入即可解锁。</p>
+          <div class="row">
+            <select id="codeSku" data-skus></select>
+            <select id="codeChannel"><option>闲鱼</option><option>小红书</option><option>通用</option></select>
+            <input id="codeCount" type="number" value="1" min="1" max="50" title="数量" style="width:76px">
+          </div>
+          <div class="row"><input id="codeNote" class="grow" placeholder="备注（发给谁）" maxlength="80"><button class="btn">生成</button></div>
+          <div class="result" id="codeResult" hidden><pre id="codeText"></pre><button type="button" class="btn ghost" id="copyCodes">复制全部</button></div>
+        </form>
+      </div>
+      <h2>兑换码</h2>
+      <div class="table-wrap"><table><thead><tr><th>生成时间</th><th>兑换码</th><th>商品</th><th>渠道 / 备注</th><th>状态</th><th></th></tr></thead><tbody id="codesBody"></tbody></table></div>
+    </section>
+
+    <section class="panel" data-pane="orders" hidden>
+      <div class="row" style="margin-bottom:10px;">
+        <input id="orderSearch" class="grow" placeholder="搜索单号 / 用户 ID / 商品 / 备注">
+        <select id="orderFilter"><option value="all">全部状态</option><option value="paid">仅已开通</option><option value="pending">仅待支付</option></select>
+        <button class="btn ghost" id="exportOrdersBtn">导出 CSV</button>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>时间</th><th>单号</th><th>用户 ID</th><th>商品</th><th>金额</th><th>渠道 / 备注</th><th>状态</th></tr></thead><tbody id="ordersBody"></tbody></table></div>
+    </section>
+
+    <section class="panel" data-pane="release" hidden>
+      <div class="cols">
+        <div class="box">
+          <h2>当前线上版本</h2>
+          <dl id="releaseNow"></dl>
+          <p class="muted">日常发版用 <code>npm run desktop:release</code>：自动打包、上传、计算 SHA256 并写入这里。下面的表单用于改更新说明、切换强制升级或紧急回滚。</p>
+        </div>
+        <form class="box" id="releaseForm">
+          <h2>修改发布配置</h2>
+          <div class="row">
+            <label>最新版本<input id="relLatest" required pattern="\d+\.\d+\.\d+" placeholder="1.1.0"></label>
+            <label>最低可用版本<input id="relMin" required pattern="\d+\.\d+\.\d+" placeholder="1.0.0"></label>
+          </div>
+          <label>安装包下载地址（https）<input id="relUrl" type="url" required placeholder="https://github.com/…/DeskOasis-Setup-1.1.0.exe"></label>
+          <label>SHA256（必填，客户端强制校验完整性）<input id="relSha" required pattern="[0-9a-fA-F]{64}" placeholder="64 位十六进制"></label>
+          <label>更新说明（用户在升级弹窗里看到）<textarea id="relNotes" rows="4" maxlength="800"></textarea></label>
+          <label class="check"><input type="checkbox" id="relForce"> 强制所有旧版本升级（旧版将无法继续使用，请谨慎）</label>
+          <p class="muted">低于「最低可用版本」的客户端会被强制升级；其余用户只会看到可跳过的升级提示。</p>
+          <button class="btn">保存发布配置</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel" data-pane="feedback" hidden>
+      <div class="table-wrap"><table><thead><tr><th>时间</th><th>用户</th><th>类型</th><th>内容</th><th>状态与回复</th></tr></thead><tbody id="feedbackBody"></tbody></table></div>
+    </section>
+
+    <section class="panel" data-pane="users" hidden>
+      <div class="row" style="margin-bottom:10px;"><input id="userSearch" class="grow" placeholder="搜索用户 ID / 昵称 / 联系方式"><button class="btn ghost" id="exportUsersBtn">导出 CSV</button></div>
+      <div class="table-wrap"><table><thead><tr><th>用户 ID</th><th>昵称</th><th>联系方式</th><th>已拥有造景</th><th>鱼友</th><th>版本</th><th>最近活跃</th><th>状态</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+</body>
+</html>

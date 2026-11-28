@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#09090b">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/mark.svg">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <title>桌面生态 · 手机伴侣</title>
+  <script type="module" crossorigin src="./assets/mobile-DsfgU6U8.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="modulepreload" crossorigin href="./assets/three-CUORlGVX.js">
+  <link rel="modulepreload" crossorigin href="./assets/catalog-CHB2dxSJ.js">
+  <link rel="modulepreload" crossorigin href="./assets/aquarium-Bq_iNmWO.js">
+  <link rel="stylesheet" crossorigin href="./assets/mobile-t4IiFDDZ.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="mark" src="./icons/mark.svg" alt="">
+        <span class="brand-name">桌面生态</span>
+        <span class="dot" id="connDot" title="与电脑的连接状态"></span>
+      </div>
+      <div class="top-actions">
+        <button class="pill-btn" id="openFeedbackBtn">意见反馈</button>
+        <button class="pill-btn" id="openProfileBtn">个人中心</button>
+      </div>
+    </header>
+
+    <section class="card tank-preview-card" id="mobileTankCard">
+      <div class="preview-head">
+        <div>
+          <div class="card-title">同款 3D 鱼缸</div>
+          <div class="card-desc" id="tankStatus">等待连接…</div>
+        </div>
+        <button class="primary-btn pip-btn" id="btnFloatTank">一键悬浮</button>
+      </div>
+      <div class="canvas-stage"><canvas id="mobileTankCanvas"></canvas></div>
+      <video id="pipVideo" muted playsinline class="pip-video"></video>
+      <div class="actions-grid">
+        <button class="act-btn" id="btnFeed">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="2"/><circle cx="7.5" cy="15.5" r="2"/><circle cx="16.5" cy="15.5" r="2"/></svg>
+          喂鱼
+        </button>
+        <button class="act-btn" id="btnClean">
+          <svg viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+          擦缸
+        </button>
+        <button class="act-btn" id="btnLight">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          灯光
+        </button>
+        <button class="act-btn" id="btnReport">
+          <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+          今日战报
+        </button>
+      </div>
+      <div class="egg-banner" id="eggBanner" hidden>
+        <span>桌面鱼缸里有 <strong id="eggCount">0</strong> 颗鱼卵</span>
+        <button class="mini-btn" id="btnHatch">孵化小鱼</button>
+      </div>
+    </section>
+
+    <section class="card hero-card">
+      <div class="card-head">
+        <div class="hero-label">今日实时入账 · 仅本机可见</div>
+        <button class="pill-btn" id="openSettingsBtn">薪资设置</button>
+      </div>
+      <div class="hero-amount" id="todayEarned">¥ 0.00</div>
+      <div class="hero-sub">
+        <span id="ratePerSec">每秒 +¥0.000</span>
+        <span id="offWorkCountdown">距离下班 --:--:--</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" id="workProgress"></div></div>
+      <div class="toilet-row">
+        <div>
+          <div class="card-title">小憩计时 <span class="timer-val" id="toiletTimer">00:00</span></div>
+          <div class="card-desc" id="toiletMoney">计时期间，桌面主鱼会潜入水草间休息</div>
+        </div>
+        <button class="primary-btn" id="toiletBtn">开始计时</button>
+      </div>
+    </section>
+
+    <section class="card shop-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">造景与主鱼图鉴</div>
+          <div class="card-desc" id="shopDesc">一键切换造景与主鱼皮肤，电脑与手机实时同步</div>
+        </div>
+        <button class="pill-btn" id="openRedeemBtn">兑换码</button>
+      </div>
+      <button class="bundle-btn" id="bundleBtn" hidden></button>
+      <div class="sec-label">3D 生态造景</div>
+      <div class="theme-grid" id="themeGrid"></div>
+      <div class="sec-label" style="margin-top:16px;">精雕主鱼皮肤</div>
+      <div class="theme-grid" id="skinGrid"></div>
+    </section>
+
+    <section class="card friends-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">鱼友串门</div>
+          <div class="card-desc" id="visitDesc">去串门，你的主鱼才会游进对方鱼缸 · 水泡 24 小时消散</div>
+        </div>
+        <button class="pill-btn" id="addFriendBtn">+ 加鱼友</button>
+      </div>
+      <div class="friend-list" id="requestList"></div>
+      <div class="friend-list" id="friendList"></div>
+    </section>
+
+    <footer class="foot">薪资数据仅存这台手机 · <a id="privacyLink">隐私说明</a></footer>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <div class="modal" id="addFriendModal" hidden>
+    <div class="modal-card">
+      <h3>添加鱼友</h3>
+      <p class="modal-note">我的好友码 <code id="myCode">--</code></p>
+      <div class="modal-actions start">
+        <button class="ghost-btn" id="copyMyCode">复制好友码</button>
+        <button class="primary-btn" id="shareInvite">分享邀请</button>
+      </div>
+      <label>输入对方的好友码<input type="text" id="inFriendCode" placeholder="DO-XXXXXX" maxlength="15" autocapitalize="characters" spellcheck="false"></label>
+      <p class="modal-note">对方同意后成为鱼友，串门时双方主鱼实时同框。</p>
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close>取消</button>
+        <button class="primary-btn" id="confirmAddFriend">发送申请</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="chatModal" hidden>
+    <div class="modal-card chat-card">
+      <div class="chat-head">
+        <span id="chatTitle">鱼友</span>
+        <div class="top-actions">
+          <button class="ghost-btn mini-close" id="visitBtn">去串门</button>
+          <button class="ghost-btn mini-close" id="removeFriendBtn">删除</button>
+          <button class="ghost-btn mini-close" data-close aria-label="关闭">✕</button>
+        </div>
+      </div>
+      <div class="chat-quick">
+        <button class="q-btn" data-kind="poke">戳一戳</button>
+        <button class="q-btn" data-kind="feed">帮喂鱼</button>
+        <button class="q-btn" data-kind="heart">送气泡</button>
+        <button class="q-btn" data-kind="plane">纸飞机</button>
+        <button class="q-btn" data-kind="urge">催下班</button>
+      </div>
+      <div class="chat-list" id="chatList"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="限 20 字内…" maxlength="20" enterkeyhint="send">
+        <button class="primary-btn" id="sendChatBtn">发送</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="settingsModal" hidden>
+    <div class="modal-card">
+      <h3>私密薪资设置</h3>
+      <p class="modal-note">数据仅保存在本手机浏览器本地，不会上传服务器或显示在电脑屏幕。</p>
+      <label>税后月薪（元）<input type="number" id="inSalary" placeholder="15000" min="0" inputmode="decimal"></label>
+      <label>每月工作天数<input type="number" id="inDays" placeholder="21.75" step="0.25" min="1" max="31" inputmode="decimal"></label>
+      <div class="row-2">
+        <label>上班时间<input type="time" id="inStart" value="09:00"></label>
+        <label>下班时间<input type="time" id="inEnd" value="18:00"></label>
+      </div>
+      <div class="modal-actions">
+        <button class="ghost-btn danger" id="clearSalary">清除本机数据</button>
+        <button class="primary-btn" id="saveSettings">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="reportModal" hidden>
+    <div class="modal-card report-card">
+      <h3>今日战报</h3>
+      <img id="reportImg" alt="今日战报">
+      <label class="check"><input type="checkbox" id="reportHideMoney"> 隐藏金额再分享</label>
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close>关闭</button>
+        <button class="primary-btn" id="shareReport">分享 / 保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="redeemModal" hidden>
+    <div class="modal-card">
+      <h3>兑换码激活</h3>
+      <p class="modal-note">输入兑换码即可永久解锁对应权益，电脑端与手机伴侣同步生效。</p>
+      <input type="text" id="inRedeemCode" placeholder="OASIS-XXX-XXXX-XXXX-XXXX" maxlength="40" autocapitalize="characters" spellcheck="false">
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close>取消</button>
+        <button class="primary-btn" id="confirmRedeem">立即兑换</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="profileModal" hidden>
+    <div class="modal-card">
+      <h3>个人中心</h3>
+      <p class="modal-note">用户 ID / 好友码 <code id="displayUserId">--</code></p>
+      <label>昵称（鱼友可见）<input type="text" id="inNickname" placeholder="桌边渔友" maxlength="16"></label>
+      <label>主鱼皮肤（串门形象）
+        <select id="inBreed">
+          <option value="goldfish">丹霞琉金</option>
+        </select>
+      </label>
+      <label>联系方式（选填，换机找回辅助）<input type="text" id="inAccount" maxlength="48"></label>
+      <label class="check"><input type="checkbox" id="inAllowReq"> 允许通过好友码搜索加我</label>
+      <label class="check"><input type="checkbox" id="inCloud"> 开启云同步（权益找回与串门）</label>
+      <div class="modal-actions">
+        <button class="ghost-btn danger" id="deleteCloud">删除云端数据</button>
+        <button class="primary-btn" id="saveProfile">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="privacyModal" hidden>
+    <div class="modal-card">
+      <h3>隐私说明</h3>
+      <ul class="privacy">
+        <li>薪资、上下班时间与计时记录：仅保存在本台手机本地。</li>
+        <li>手机与电脑通信仅走当前局域网，受动态配对码保护。</li>
+        <li>云端仅同步：匿名用户 ID、昵称、选填联系方式、已激活权益与好友列表。</li>
+        <li>水泡消息仅内存瞬时中转，最长保留 24 小时即销毁。</li>
+        <li>可随时关闭云同步或一键删除云端数据。</li>
+      </ul>
+      <button class="primary-btn full" data-close>知道了</button>
+    </div>
+  </div>
+
+  <div class="modal" id="feedbackModal" hidden>
+    <div class="modal-card">
+      <h3>意见反馈</h3>
+      <p class="modal-note">仅附带匿名用户 ID，绝不包含本机薪资数据。</p>
+      <label>类型
+        <select id="inFbCat">
+          <option value="功能建议">功能建议</option>
+          <option value="画面体验">画面体验</option>
+          <option value="Bug反馈">Bug 反馈</option>
+        </select>
+      </label>
+      <label>内容<textarea id="inFbText" rows="4" placeholder="写下你的建议或遇到的问题…" maxlength="500"></textarea></label>
+      <div id="fbListBox" class="fb-history"></div>
+      <div class="modal-actions">
+        <button class="ghost-btn" data-close>关闭</button>
+        <button class="primary-btn" id="submitFeedback">提交</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

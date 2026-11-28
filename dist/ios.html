@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#07090e">
+  <title>桌面生态 · DeskOasis</title>
+  <link rel="icon" href="./icons/mark.svg">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <script type="module" crossorigin src="./assets/ios-Df2zLbzT.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="modulepreload" crossorigin href="./assets/three-CUORlGVX.js">
+  <link rel="modulepreload" crossorigin href="./assets/catalog-CHB2dxSJ.js">
+  <link rel="modulepreload" crossorigin href="./assets/aquarium-Bq_iNmWO.js">
+  <link rel="modulepreload" crossorigin href="./assets/audio-DDy8cYqx.js">
+  <link rel="stylesheet" crossorigin href="./assets/ios-ChjnU5S9.css">
+</head>
+<body>
+  <!-- 3D 空间光晕与全屏画布 -->
+  <div class="stage-bg" id="stageBg"></div>
+  <canvas id="tankCanvas"></canvas>
+  <video id="pipVideo" muted playsinline class="pip-video"></video>
+
+  <!-- 拖拽碰壁触发漫游的边缘光晕提示 -->
+  <div class="edge-glow" id="edgeGlow" hidden>
+    <div class="edge-badge" id="edgeBadge">松手放小鱼跃出漫游</div>
+  </div>
+
+  <!-- 好友鱼铭牌与水泡浮层 -->
+  <div class="tag-layer" id="friendTagLayer"></div>
+  <div class="bubble-layer" id="bubbleLayer"></div>
+
+  <!-- 顶部灵动岛安全区状态栏 -->
+  <header class="top-hud" id="topHud">
+    <div class="brand-pill" id="brandPill">
+      <img src="./icons/mark.svg" alt="" width="20" height="20">
+      <span class="brand-name" id="brandTitle">桌面生态</span>
+      <span class="live-dot" id="cloudDot" title="云端同步状态"></span>
+      <span class="growth-badge" id="growthBadge">Lv.1</span>
+    </div>
+    <div class="top-right">
+      <button class="icon-pill" id="btnResetPos" title="鱼缸归位" aria-label="鱼缸归位" hidden>
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+      </button>
+      <button class="icon-pill" id="btnPipTop" title="悬浮到桌面（画中画）" aria-label="悬浮到桌面">
+        <svg viewBox="0 0 24 24"><rect width="18" height="14" x="3" y="5" rx="2.5"/><rect width="7" height="5" x="12" y="12" rx="1.2"/></svg>
+      </button>
+      <button class="icon-pill" id="btnToggleDeck" title="收起或展开控制台" aria-label="收起或展开控制台">
+        <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- 漫游模式顶部轻提示 -->
+  <div class="float-pill top-sub" id="roamPill" hidden>
+    <span id="roamHintText">小鱼正在全屏漫游 · 轻点小鱼回缸</span>
+    <button class="ghost" id="roamPipBtn">悬浮桌面</button>
+    <button id="roamExitBtn">回鱼缸</button>
+  </div>
+
+  <!-- 参观好友鱼缸悬浮胶囊 -->
+  <div class="float-pill top-sub" id="peekPill" hidden>
+    <span id="peekText">参观好友鱼缸</span>
+    <button class="ghost" id="peekFeed">喂鱼</button>
+    <button class="ghost" id="peekClean">擦缸</button>
+    <button class="ghost" id="peekPoke" hidden>戳一戳</button>
+    <button class="ghost" id="peekHeart" hidden>送气泡</button>
+    <button id="peekBack">返回</button>
+  </div>
+
+  <!-- 未读消息 / 串门中 / 试看解锁 轻胶囊 -->
+  <button class="unread-pill" id="unreadPill" hidden></button>
+
+  <div class="float-pill stage-sub" id="visitPill" hidden>
+    <span id="visitText">串门中</span>
+    <button id="visitPeekBtn">看缸</button>
+    <button class="ghost" id="visitLeaveBtn">召回</button>
+  </div>
+
+  <div class="float-pill stage-sub" id="upsellPill" hidden>
+    <span id="upsellText">体验已结束</span>
+    <button id="upsellBuyBtn">解锁</button>
+    <button class="ghost" id="upsellCloseBtn" aria-label="关闭">✕</button>
+  </div>
+
+  <!-- 点击好友鱼快速发送 20 字水泡 -->
+  <div class="reply-pill" id="replyPill" hidden>
+    <input type="text" id="replyInput" maxlength="20" placeholder="限20字水泡…" enterkeyhint="send">
+    <button id="replySendBtn">发送</button>
+  </div>
+
+  <!-- 下半屏常驻：Apple Liquid Glass 液态毛玻璃控制台 -->
+  <section class="console-deck" id="consoleDeck" aria-label="鱼缸控制台">
+    <!-- 可拖拽/轻点折叠把手 -->
+    <div class="deck-handle-bar" id="deckHandle">
+      <div class="deck-grabber"></div>
+    </div>
+
+    <!-- 快捷交互胶囊行（Apple Control Center 风格） -->
+    <div class="quick-strip" id="quickStrip">
+      <button class="q-tile" id="qFeed" aria-label="喂鱼">
+        <span class="q-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="2.2"/><circle cx="7.2" cy="15.5" r="2.2"/><circle cx="16.8" cy="15.5" r="2.2"/></svg></span>
+        <span class="q-lbl">喂鱼</span>
+      </button>
+      <button class="q-tile" id="qClean" aria-label="擦玻璃">
+        <span class="q-ic"><svg viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg></span>
+        <span class="q-lbl">擦缸</span>
+      </button>
+      <button class="q-tile on" id="qLight" aria-label="开关灯">
+        <span class="q-ic"><svg viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
+        <span class="q-lbl">灯光</span>
+      </button>
+      <button class="q-tile" id="qRoam" aria-label="漫游">
+        <span class="q-ic"><svg viewBox="0 0 24 24"><path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6Z"/><path d="M18 12v.5"/><path d="M16 17.93a9.77 9.77 0 0 1 0-11.86"/><path d="M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 1.5-1 5 .23 6.5-1.24 1.5-1.24 5-.23 6.5C5.58 18.03 7 16 7 13.33"/></svg></span>
+        <span class="q-lbl">漫游</span>
+      </button>
+      <button class="q-tile" id="qLock" aria-label="锁屏屏保">
+        <span class="q-ic"><svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+        <span class="q-lbl">锁屏</span>
+      </button>
+    </div>
+
+    <!-- Apple 风格分段导航栏 -->
+    <div class="deck-tabs" id="deckTabs" role="tablist">
+      <button class="d-tab on" data-tab="look" role="tab" aria-selected="true">造景与鱼</button>
+      <button class="d-tab" data-tab="modes" role="tab" aria-selected="false">桌面与壁纸</button>
+      <button class="d-tab" data-tab="friends" role="tab" aria-selected="false">
+        鱼友串门
+        <i class="tab-dot" id="friendBadge" hidden></i>
+      </button>
+      <button class="d-tab" data-tab="me" role="tab" aria-selected="false">我的</button>
+    </div>
+
+    <!-- 控制台内容滚动区 -->
+    <div class="deck-body" id="deckBody"></div>
+  </section>
+
+  <!-- Apple 锁屏屏保覆盖层（支持时钟、倒计时与 Face ID / Touch ID 解锁） -->
+  <div class="lock-overlay" id="lockOverlay" hidden>
+    <div class="lock-clock-wrap">
+      <div class="lock-date" id="lockDate">11月28日 星期六</div>
+      <div class="lock-time" id="lockTime">13:20</div>
+      <div class="lock-timer" id="lockTimer" hidden>剩余 15:00</div>
+    </div>
+    <div class="lock-dock" id="lockDock">
+      <button class="lock-unlock-btn" id="lockUnlockBtn">
+        <svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+        <span id="lockUnlockLabel">验证解锁</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 纯净动态壁纸 / 桌搭常亮模式底栏 -->
+  <div class="wallpaper-hud" id="wallpaperHud" hidden>
+    <div class="wp-bar">
+      <button class="wp-btn pri" id="wpSaveBtn">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>存为 iPhone 壁纸</span>
+      </button>
+      <button class="wp-btn" id="wpPipBtn">悬浮桌面</button>
+      <button class="wp-btn" id="wpExitBtn">退出壁纸</button>
+    </div>
+  </div>
+
+  <!-- PRO / 单品解锁弹层（仅购买时唤起） -->
+  <div class="modal-backdrop" id="tierBackdrop" hidden>
+    <section class="modal-card" id="tierPanel" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2 id="tierTitle">解锁完整体验</h2>
+        <button class="modal-close" id="tierClose" aria-label="关闭">✕</button>
+      </div>
+      <div class="modal-body" id="tierBody"></div>
+    </section>
+  </div>
+
+  <!-- 轻提示 Toast -->
+  <div class="toast" id="toast" hidden></div>
+
+</body>
+</html>

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>桌面生态</title>
+  <style>
+    /* 透明背景，整个窗口就是一块 canvas；所有悬浮条采用 shadcn/ui Zinc-950 毛玻璃 */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: transparent;
+      -webkit-app-region: no-drag;
+      user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .bubble-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .friend-tag-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 5;
+    }
+    .friend-tag {
+      position: absolute;
+      transform: translate(-50%, -140%);
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(12, 12, 15, 0.76);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #fafafa;
+      font-size: 10.5px;
+      font-weight: 600;
+      line-height: 1.3;
+      white-space: nowrap;
+      pointer-events: auto;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+    .friend-tag::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #38bdf8;
+    }
+    .friend-tag:hover { background: rgba(24, 24, 29, 0.92); border-color: rgba(255, 255, 255, 0.28); }
+    .aqua-bubble {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      max-width: 220px;
+      padding: 6.5px 12px;
+      border-radius: 12px;
+      background: rgba(12, 12, 15, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(14px);
+      color: #fafafa;
+      font-size: 11.5px;
+      line-height: 1.45;
+      pointer-events: auto;
+      cursor: pointer;
+      animation: floatUp 4.6s ease-out forwards;
+    }
+    .aqua-bubble .b-meta {
+      display: block;
+      font-size: 10px;
+      color: #a1a1aa;
+      margin-bottom: 2px;
+    }
+    .aqua-bubble .b-txt {
+      display: block;
+      word-break: break-all;
+    }
+    /* 好友申请胶囊 */
+    .req-drop {
+      position: fixed;
+      transform: translate(-50%, -50%);
+      z-index: 24;
+    }
+    .req-pill {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(12, 12, 15, 0.9);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      color: #fafafa;
+      border-radius: 999px;
+      padding: 6px 13px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      animation: arrowBob 2.2s ease-in-out infinite;
+    }
+    .req-pill:hover { background: rgba(24, 24, 29, 0.96); }
+    .req-detail {
+      margin-top: 6px;
+      padding: 10px 12px;
+      border-radius: 11px;
+      background: rgba(12, 12, 15, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(16px);
+      color: #fafafa;
+      font-size: 11.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 176px;
+    }
+    .req-detail[hidden], .req-drop[hidden] { display: none; }
+    .req-detail .r-acts { display: flex; gap: 6px; }
+    .req-detail button {
+      flex: 1; border: none; border-radius: 7px; padding: 5px 8px;
+      font-size: 11px; font-weight: 600; background: #fafafa; color: #09090b; cursor: pointer;
+    }
+    .req-detail button.ghost { background: rgba(255, 255, 255, 0.09); color: #e4e4e7; }
+    @keyframes floatUp {
+      0%   { opacity: 0; transform: translate(-50%, -60%) scale(0.86); }
+      10%  { opacity: 0.96; transform: translate(-50%, -100%) scale(1); }
+      80%  { opacity: 0.9; transform: translate(-50%, -185%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -235%) scale(0.94); }
+    }
+    .reply-pill {
+      position: fixed;
+      transform: translate(-50%, -100%);
+      display: flex;
+      align-items: center;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(12, 12, 15, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(14px);
+    }
+    .reply-pill[hidden] { display: none; }
+    .reply-pill input {
+      width: 132px;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 12px;
+      color: #fafafa;
+      font-family: inherit;
+    }
+    .reply-pill input::placeholder { color: #71717a; }
+    /* 鱼缸内部上方统一提示栈：严格位于鱼缸水景上方，多条提示垂直分行排列，永不遮挡、永不掉到鱼缸下方 */
+    .tank-top-stack {
+      position: fixed;
+      left: 50%;
+      top: var(--tank-top, 16%);
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      max-width: 88%;
+      z-index: 24;
+      pointer-events: none;
+    }
+    .tank-top-stack > * {
+      pointer-events: auto;
+    }
+    .notice-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+    }
+    .notice-stack:empty { display: none; }
+    .tank-notice-pill {
+      pointer-events: auto;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(12, 12, 15, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      color: #fafafa;
+      font-size: 11.5px;
+      line-height: 1.4;
+      white-space: nowrap;
+      animation: stackFadeIn 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes stackFadeIn {
+      from { opacity: 0; transform: translateY(-6px) scale(0.94); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .hud-pill {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 100%;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(12, 12, 15, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+      color: #fafafa;
+      font-size: 11.5px;
+      line-height: 1.4;
+      white-space: nowrap;
+      animation: stackFadeIn 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .hud-pill[hidden] { display: none; }
+    .hud-pill button {
+      border: none;
+      border-radius: 999px;
+      padding: 3.5px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #fafafa;
+      color: #09090b;
+      cursor: pointer;
+      transition: opacity 0.12s ease;
+    }
+    .hud-pill button:hover { opacity: 0.9; }
+    .hud-pill button.ghost {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e4e4e7;
+    }
+    .hud-pill button.gold {
+      background: #fafafa;
+      color: #09090b;
+    }
+    /* 灵动水下液态玻璃邀约气泡（位于鱼缸内部上方栈中，分行排列不遮挡） */
+    .upsell-bubble {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px 7px 14px;
+      border-radius: 999px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(125, 211, 252, 0.16) 55%, rgba(12, 26, 38, 0.42));
+      border: 1px solid rgba(255, 255, 255, 0.36);
+      box-shadow:
+        0 12px 30px rgba(6, 24, 36, 0.34),
+        0 0 20px rgba(125, 211, 252, 0.18),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.55),
+        inset 0 -3px 10px rgba(56, 189, 248, 0.14);
+      backdrop-filter: blur(22px) saturate(185%);
+      color: rgba(255, 255, 255, 0.96);
+      font-size: 12px;
+      line-height: 1.35;
+      white-space: nowrap;
+      animation: stackFadeIn 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .upsell-bubble[hidden] { display: none; }
+    .upsell-bubble .ub-text {
+      text-shadow: 0 1px 6px rgba(6, 20, 32, 0.38);
+      letter-spacing: 0.01em;
+    }
+    .upsell-bubble .ub-go {
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 11.5px;
+      font-weight: 600;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(224, 247, 255, 0.82));
+      color: #0b2230;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.22);
+      transition: transform 0.14s ease, background 0.14s ease;
+    }
+    .upsell-bubble .ub-go:hover { transform: scale(1.04); background: #ffffff; }
+    .upsell-bubble .ub-close {
+      border: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.14s ease;
+    }
+    .upsell-bubble .ub-close:hover { background: rgba(255, 255, 255, 0.28); color: #ffffff; }
+    .unread-pill {
+      position: relative;
+      padding: 5.5px 13px;
+      border-radius: 999px;
+      background: rgba(12, 12, 15, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      color: #fafafa;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      animation: arrowBob 2s ease-in-out infinite;
+    }
+    .unread-pill[hidden] { display: none; }
+    .ss-hint {
+      position: fixed;
+      right: 22px;
+      bottom: 18px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(12, 12, 15, 0.76);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      color: #d4d4d8;
+      font-size: 12px;
+      z-index: 30;
+      pointer-events: none;
+    }
+    .ss-hint[hidden] { display: none; }
+    /* 极简玻璃拟态锁屏时钟与液态玻璃解锁胶囊 */
+    .lock-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 35;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10vh 24px 7vh;
+      pointer-events: none;
+    }
+    .lock-overlay[hidden] { display: none; }
+    .lock-clock {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.94);
+      padding: 18px 36px 20px;
+      border-radius: 28px;
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(22px) saturate(160%);
+      user-select: none;
+    }
+    .lock-time {
+      font-size: clamp(58px, 8.5vw, 108px);
+      font-weight: 200;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .lock-date {
+      margin-top: 8px;
+      font-size: clamp(13px, 1.3vw, 16px);
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.78);
+      letter-spacing: 0.08em;
+    }
+    .lock-dock-timer {
+      padding: 0 6px 0 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.92);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .lock-dock-timer[hidden] { display: none; }
+
+    /* 屏保模式询问气泡 + 锁屏时长选择卡 + 应用内 PIN 解锁弹窗 */
+    .ss-flow-area {
+      pointer-events: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .ss-ask-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px 10px 20px;
+      border-radius: 999px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(125, 211, 252, 0.15) 55%, rgba(12, 26, 38, 0.42));
+      border: 1px solid rgba(255, 255, 255, 0.36);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(26px) saturate(185%);
+      color: #ffffff;
+      font-size: 13.5px;
+      animation: stackFadeIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .ss-ask-bubble[hidden] { display: none; }
+    .ss-btn-pri {
+      border: none;
+      border-radius: 999px;
+      padding: 7px 18px;
+      font-size: 12.5px;
+      font-weight: 600;
+      background: #ffffff;
+      color: #091b26;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.25);
+      transition: transform 0.14s ease, background 0.14s ease;
+    }
+    .ss-btn-pri:hover { transform: scale(1.03); background: #f0f9ff; }
+    .ss-btn-ghost {
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      padding: 7px 15px;
+      font-size: 12.5px;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.92);
+      cursor: pointer;
+      transition: background 0.14s ease;
+    }
+    .ss-btn-ghost:hover { background: rgba(255, 255, 255, 0.22); }
+
+    .ss-duration-card {
+      width: min(370px, 90vw);
+      padding: 18px 20px 16px;
+      border-radius: 22px;
+      background: linear-gradient(155deg, rgba(18, 26, 36, 0.72), rgba(10, 14, 20, 0.82));
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+      backdrop-filter: blur(28px) saturate(175%);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      animation: stackFadeIn 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .ss-duration-card[hidden] { display: none; }
+    .ss-dur-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .ss-dur-title { font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.84); }
+    .ss-dur-val { font-size: 20px; font-weight: 600; color: #ffffff; font-variant-numeric: tabular-nums; }
+    .ss-slider-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: opacity 0.18s ease;
+    }
+    .ss-slider-wrap.dim { opacity: 0.38; }
+    .ss-slider {
+      width: 100%;
+      height: 6px;
+      accent-color: #7dd3fc;
+      cursor: pointer;
+    }
+    .ss-presets {
+      display: flex;
+      gap: 6px;
+      justify-content: space-between;
+    }
+    .ss-preset {
+      flex: 1;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      padding: 5px 0;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+    .ss-preset:hover { background: rgba(255, 255, 255, 0.18); color: #ffffff; }
+    .ss-preset.on { background: #ffffff; color: #091b26; border-color: #ffffff; font-weight: 600; }
+    .ss-forever-btn {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 12px;
+      padding: 9px 14px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 12.5px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+    .ss-forever-btn:hover { background: rgba(255, 255, 255, 0.15); }
+    .ss-forever-btn.on {
+      background: rgba(125, 211, 252, 0.24);
+      border-color: rgba(125, 211, 252, 0.72);
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .ss-setup-pin {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+    .ss-setup-pin[hidden] { display: none; }
+    .ss-setup-pin label { font-size: 11.5px; color: rgba(255, 255, 255, 0.8); }
+    .ss-setup-pin input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background: rgba(0, 0, 0, 0.34);
+      color: #ffffff;
+      font-size: 14px;
+      letter-spacing: 0.26em;
+      text-align: center;
+      outline: none;
+      font-family: inherit;
+    }
+    .ss-setup-pin input::placeholder { letter-spacing: normal; font-size: 12px; color: rgba(255, 255, 255, 0.52); }
+    .ss-setup-pin input:focus { border-color: rgba(125, 211, 252, 0.8); }
+    .ss-dur-err {
+      font-size: 11.5px;
+      color: #fca5a5;
+      text-align: center;
+      min-height: 16px;
+    }
+    .ss-dur-err:empty { display: none; }
+    .ss-dur-acts {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    /* 应用内 PIN 码解锁对话框（居中毛玻璃弹窗，绝不弹系统框） */
+    .pin-dialog-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(4, 10, 16, 0.42);
+      backdrop-filter: blur(8px);
+      pointer-events: auto;
+    }
+    .pin-dialog-backdrop[hidden] { display: none; }
+    .pin-dialog-box {
+      width: min(320px, 88vw);
+      padding: 20px 22px 18px;
+      border-radius: 20px;
+      background: linear-gradient(155deg, rgba(20, 26, 34, 0.92), rgba(10, 12, 18, 0.96));
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+      animation: stackFadeIn 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .pin-dialog-box.shake { animation: lockShake 0.34s ease; }
+    .pin-dialog-title { font-size: 15px; font-weight: 600; color: #ffffff; }
+    .pin-dialog-sub { font-size: 12px; color: rgba(255, 255, 255, 0.66); }
+    .pin-dialog-input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 18px;
+      letter-spacing: 0.36em;
+      text-align: center;
+      outline: none;
+      font-family: inherit;
+    }
+    .pin-dialog-input::placeholder { letter-spacing: normal; font-size: 12.5px; color: rgba(255, 255, 255, 0.5); }
+    .pin-dialog-input:focus { border-color: rgba(125, 211, 252, 0.85); background: rgba(255, 255, 255, 0.14); }
+    .pin-dialog-err { font-size: 12px; color: #fca5a5; min-height: 16px; }
+    .pin-dialog-err:empty { display: none; }
+    .pin-dialog-acts { display: flex; gap: 8px; margin-top: 2px; }
+    .pin-dialog-acts button { flex: 1; }
+    .lock-dock {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 999px;
+      background: linear-gradient(150deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.06));
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+      backdrop-filter: blur(28px) saturate(180%);
+      opacity: 0;
+      transform: translateY(12px) scale(0.96);
+      transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .lock-dock.show { opacity: 1; transform: translateY(0) scale(1); }
+    .lock-dock.shake { animation: lockShake 0.34s ease; }
+    @keyframes lockShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      55% { transform: translateX(8px); }
+      80% { transform: translateX(-4px); }
+    }
+    .lock-row { display: flex; align-items: center; gap: 6px; }
+    .lock-row[hidden] { display: none; }
+    .lock-pin-in {
+      width: 132px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      font-size: 14px;
+      letter-spacing: 0.28em;
+      text-align: center;
+      outline: none;
+      font-family: inherit;
+    }
+    .lock-pin-in:focus { border-color: rgba(255, 255, 255, 0.52); background: rgba(255, 255, 255, 0.18); }
+    .lock-pin-in::placeholder { letter-spacing: normal; font-size: 12px; color: rgba(255, 255, 255, 0.65); }
+    .lock-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 22px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      transition: background 0.16s ease, transform 0.14s ease;
+    }
+    .lock-btn:hover { background: rgba(255, 255, 255, 0.32); }
+    .lock-btn:active { transform: scale(0.97); }
+    .lock-btn:disabled { opacity: 0.65; cursor: default; }
+    .lock-btn svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    /* 极简版本更新胶囊与悬浮卡 */
+    .update-hub {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+    }
+    .update-hub[hidden] { display: none; }
+    .update-arrow {
+      min-width: 36px;
+      height: 36px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background: rgba(12, 12, 15, 0.88);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      color: #fafafa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 600;
+      animation: arrowBob 1.8s ease-in-out infinite;
+    }
+    .update-arrow:hover { border-color: rgba(255, 255, 255, 0.45); background: rgba(24, 24, 29, 0.95); }
+    .update-arrow svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .update-arrow .u-hover-txt { display: none; padding: 0 2px; letter-spacing: 0.04em; }
+    .update-arrow:not(.downloading):hover svg { display: none; }
+    .update-arrow:not(.downloading):hover .u-hover-txt { display: inline; }
+    @keyframes arrowBob {
+      0%, 100% { transform: translateY(2px); }
+      50% { transform: translateY(-4px); }
+    }
+    .update-card {
+      width: 188px;
+      padding: 11px 12px;
+      border-radius: 12px;
+      background: rgba(12, 12, 15, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+      color: #fafafa;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+    }
+    .update-card[hidden] { display: none; }
+    .update-card .u-title { font-size: 13px; font-weight: 700; color: #fafafa; letter-spacing: -0.01em; }
+    .update-card .u-notes { font-size: 11px; color: #a1a1aa; line-height: 1.45; max-height: 58px; overflow-y: auto; }
+    .update-card .u-status { font-size: 11px; color: #7dd3fc; }
+    .update-card .u-actions { display: flex; gap: 6px; }
+    .update-card button {
+      flex: 1;
+      border: none;
+      border-radius: 7px;
+      padding: 6px 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #fafafa;
+      color: #09090b;
+    }
+    .update-card button.ghost {
+      flex: 0 0 auto;
+      background: rgba(255, 255, 255, 0.09);
+      color: #e4e4e7;
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/desktop-Brl9ggWI.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="modulepreload" crossorigin href="./assets/three-CUORlGVX.js">
+  <link rel="modulepreload" crossorigin href="./assets/catalog-CHB2dxSJ.js">
+  <link rel="modulepreload" crossorigin href="./assets/aquarium-Bq_iNmWO.js">
+  <link rel="modulepreload" crossorigin href="./assets/audio-DDy8cYqx.js">
+</head>
+<body>
+  <canvas id="tank"></canvas>
+  <div class="friend-tag-layer" id="friendTagLayer"></div>
+  <div class="bubble-layer" id="bubbleLayer"></div>
+  <div class="tank-top-stack" id="tankTopStack">
+    <div class="notice-stack" id="noticeStack"></div>
+    <div class="hud-pill" id="onboardPill" hidden>
+      <span>拖动摆放 · 右键菜单 · Ctrl+滚轮缩放</span>
+      <button id="onboardOk">好的</button>
+    </div>
+    <div class="hud-pill" id="peekPill" hidden>
+      <span id="peekText">参观好友鱼缸</span>
+      <button class="ghost" id="peekFeed">喂鱼</button>
+      <button class="ghost" id="peekClean">擦缸</button>
+      <button class="ghost" id="peekPoke" hidden>戳一戳</button>
+      <button class="ghost" id="peekHeart" hidden>送气泡</button>
+      <button id="peekBack">返回</button>
+    </div>
+    <div class="hud-pill" id="visitPill" hidden>
+      <span id="visitText">串门中</span>
+      <button id="visitPeekBtn">看缸</button>
+      <button class="ghost" id="visitLeaveBtn">召回</button>
+    </div>
+    <div class="upsell-bubble" id="upsellPill" hidden>
+      <span class="ub-text" id="upsellText">意犹未尽？让小鱼一直陪你吧</span>
+      <button class="ub-go" id="upsellBuyBtn">留住它</button>
+      <button class="ub-close" id="upsellCloseBtn" aria-label="关闭">✕</button>
+    </div>
+    <button class="unread-pill" id="unreadPill" hidden></button>
+  </div>
+  <div class="req-drop" id="reqDrop" hidden>
+    <button class="req-pill" id="reqPillBtn">新好友申请</button>
+    <div class="req-detail" id="reqDetail" hidden>
+      <div id="reqWho"></div>
+      <div class="r-acts">
+        <button id="reqAcceptBtn">同意</button>
+        <button class="ghost" id="reqIgnoreBtn">忽略</button>
+      </div>
+    </div>
+  </div>
+  <div class="update-hub" id="updateHub" hidden>
+    <div class="update-card" id="updateCard" hidden>
+      <div class="u-title" id="updateTitle">v1.3.0</div>
+      <div class="u-notes" id="updateNotes" hidden></div>
+      <div class="u-status" id="updateStatus" hidden></div>
+      <div class="u-actions">
+        <button id="updateGoBtn">自动更新</button>
+        <button class="ghost" id="updateSkipBtn">收起</button>
+      </div>
+    </div>
+    <button class="update-arrow" id="updateArrow" title="点击立即更新">
+      <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      <span class="u-hover-txt">更新</span>
+      <span id="updatePct" hidden></span>
+    </button>
+  </div>
+  <div class="reply-pill" id="replyPill" hidden>
+    <input type="text" id="replyInput" maxlength="20" placeholder="限20字，回车发送">
+  </div>
+  <div class="ss-hint" id="ssHint" hidden>动态壁纸 · Ctrl+Alt+W 退出</div>
+  <div class="lock-overlay" id="lockOverlay" hidden>
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="lock-clock">
+        <div class="lock-time" id="lockTime">12:00</div>
+        <div class="lock-date" id="lockDate"></div>
+      </div>
+      <div class="ss-flow-area" id="ssFlowArea">
+        <div class="ss-ask-bubble" id="ssAskBubble" hidden>
+          <span>您已进入屏保模式，是否锁屏？</span>
+          <button class="ss-btn-pri" id="ssAskLockBtn">锁屏</button>
+          <button class="ss-btn-ghost" id="ssAskKeepBtn">仅屏保</button>
+          <button class="ss-btn-ghost" id="ssAskExitBtn">退出</button>
+        </div>
+        <div class="ss-duration-card" id="ssDurationCard" hidden>
+          <div class="ss-dur-head">
+            <span class="ss-dur-title">选择锁屏时长</span>
+            <span class="ss-dur-val" id="ssDurVal">15 分钟</span>
+          </div>
+          <div class="ss-slider-wrap" id="ssSliderWrap">
+            <input type="range" class="ss-slider" id="ssDurSlider" min="1" max="60" step="1" value="15">
+            <div class="ss-presets" id="ssDurPresets">
+              <button type="button" class="ss-preset" data-min="1">1分</button>
+              <button type="button" class="ss-preset" data-min="5">5分</button>
+              <button type="button" class="ss-preset on" data-min="15">15分</button>
+              <button type="button" class="ss-preset" data-min="30">30分</button>
+              <button type="button" class="ss-preset" data-min="60">60分</button>
+            </div>
+          </div>
+          <button type="button" class="ss-forever-btn" id="ssForeverBtn">
+            <span>持续锁屏（可解锁）</span>
+            <span id="ssForeverTag">未选</span>
+          </button>
+          <div class="ss-dur-acts">
+            <button type="button" class="ss-btn-ghost" id="ssDurBackBtn">返回</button>
+            <button type="button" class="ss-btn-pri" id="ssDurStartBtn">开始锁屏</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="lock-dock" id="lockDock">
+      <div class="lock-row" id="lockSimpleRow">
+        <span class="lock-dock-timer" id="lockDockTimer" hidden></span>
+        <button class="lock-btn" id="lockUnlockBtn">
+          <svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+          <span id="lockUnlockText">解锁</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

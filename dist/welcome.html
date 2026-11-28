@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>欢迎来到桌面生态</title>
+  <style>
+    body { padding: 8px; }
+    .card {
+      padding: 24px 24px 22px;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+      animation: popIn 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.96) translateY(6px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .hero { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; -webkit-app-region: drag; }
+    .emblem {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: #18181b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .emblem img { width: 34px; height: 34px; border-radius: 8px; }
+    .hero h1 { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+    .hero p { font-size: 12.5px; color: var(--fg-muted); max-width: 300px; line-height: 1.5; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field-label { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #d4d4d8; font-weight: 600; }
+    .input-wrap { display: flex; gap: 8px; }
+    .input-wrap input { font-size: 14px; padding: 10px 12px; font-weight: 600; }
+    .dice-btn {
+      flex: none;
+      padding: 0 13px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: #18181b;
+      color: #fafafa;
+      font-size: 12.5px;
+      font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .dice-btn:hover { background: #27272a; }
+    .dice-btn svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .status-line {
+      min-height: 18px;
+      font-size: 12px;
+      display: flex; align-items: center; gap: 6px;
+      color: var(--fg-muted);
+    }
+    .status-line.ok { color: #34d399; }
+    .status-line.bad { color: #f87171; }
+    .breed {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: #18181b;
+      color: #fafafa;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      font-size: 12.5px; font-weight: 600;
+    }
+    .breed svg { width: 17px; height: 17px; stroke: #38bdf8; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .start-btn {
+      width: 100%;
+      padding: 11px 16px;
+      font-size: 14px;
+      border-radius: 10px;
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/welcome-CYBVy-MU.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="stylesheet" crossorigin href="./assets/dialog-DA0NrzqE.css">
+</head>
+<body>
+  <div class="card">
+    <div class="hero">
+      <div class="emblem"><img src="./icons/mark.svg" alt="桌面生态"></div>
+      <h1>给自己起个名字</h1>
+      <p>全服唯一昵称 · 支持一键随机生成</p>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <span>昵称</span>
+        <span style="font-size:11px;color:var(--fg-dim);">2～16 字</span>
+      </div>
+      <div class="input-wrap">
+        <input class="grow" type="text" id="nameInput" maxlength="16" placeholder="输入昵称…" autofocus>
+        <button type="button" class="dice-btn" id="diceBtn" title="随机生成可用昵称">
+          <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/></svg>
+          随机
+        </button>
+      </div>
+      <div class="status-line" id="statusLine">正在生成可用昵称…</div>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><span>初始主鱼</span></div>
+      <div id="breedList">
+        <button type="button" class="breed on" data-breed="goldfish">
+          <svg viewBox="0 0 24 24"><path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6Z"/><path d="M18 12v.5"/><path d="M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 1.5-1 5 .23 6.5-1.24 1.5-1.24 5-.23 6.5C5.58 18.03 7 16 7 13.33"/></svg>
+          <span>丹霞琉金（进入后右键可换更多皮肤）</span>
+        </button>
+      </div>
+    </div>
+
+    <button type="button" class="btn start-btn" id="startBtn">开启桌面鱼缸</button>
+  </div>
+
+</body>
+</html>

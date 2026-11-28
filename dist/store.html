@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>造景商城 · 桌面生态</title>
+  <style>
+    .tabs { display: flex; gap: 4px; padding: 3px; border-radius: 10px; background: #09090b; border: 1px solid var(--border); }
+    .tab { flex: 1; border: none; border-radius: 7px; padding: 6.5px 0; font-size: 12.5px; font-weight: 500; background: transparent; color: var(--fg-muted); position: relative; transition: all 0.15s ease; }
+    .tab.on { background: #27272a; color: var(--fg); font-weight: 600; }
+    .tab i { position: absolute; top: 5px; right: 12px; width: 6px; height: 6px; border-radius: 50%; background: #38bdf8; }
+    .pane { flex: 1; display: flex; flex-direction: column; gap: 10px; padding-right: 2px; }
+    .bundle { border-radius: 12px; padding: 12px 14px; background: linear-gradient(180deg, #1b1b20, #121216); border: 1px solid var(--border-strong); color: var(--fg); display: flex; align-items: center; gap: 10px; }
+    .bundle b { font-size: 13.5px; display: block; color: var(--fg); }
+    .bundle span { font-size: 11.5px; color: var(--fg-muted); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .theme { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #0e0e11; display: flex; flex-direction: column; transition: border-color 0.15s ease; }
+    .theme.on { border-color: #fafafa; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2); }
+    .theme img { width: 100%; aspect-ratio: 960 / 824; object-fit: cover; background: #09090b; display: block; border-bottom: 1px solid var(--border); }
+    .theme .body { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .theme .name { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 600; color: var(--fg); }
+    .theme .desc { font-size: 11px; color: var(--fg-muted); line-height: 1.4; flex: 1; }
+    .theme .row .btn { flex: 1; }
+    .skin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .skin-card { border: 1px solid var(--border); border-radius: 11px; padding: 0; overflow: hidden; background: #0e0e11; display: flex; flex-direction: column; gap: 5px; }
+    .skin-card.on { border-color: #fafafa; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2); }
+    .skin-card img { width: 100%; aspect-ratio: 480 / 272; object-fit: cover; display: block; border-bottom: 1px solid var(--border); }
+    .skin-card > :not(img) { margin: 0 10px; }
+    .skin-card > .row { margin-bottom: 9px; }
+    .skin-card .name { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 600; color: var(--fg); margin-top: 4px; }
+    .skin-card .desc { font-size: 11px; color: var(--fg-muted); line-height: 1.38; flex: 1; }
+    .skin-card .row .btn { flex: 1; }
+    .sec-head { font-size: 12px; font-weight: 600; color: #d4d4d8; margin: 2px 0 -2px; display: flex; justify-content: space-between; align-items: center; }
+    .box { border: 1px solid var(--border); border-radius: 11px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; background: rgba(255, 255, 255, 0.025); }
+    .box h4 { font-size: 12.5px; color: var(--fg); }
+    .friend { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 9px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); }
+    .friend .who { flex: 1; min-width: 0; }
+    .friend .who b { font-size: 12.5px; display: block; color: var(--fg); }
+    .friend .who span { font-size: 11px; color: var(--fg-muted); }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: #52525b; flex: none; }
+    .dot.on { background: #34d399; box-shadow: 0 0 8px rgba(52, 211, 153, 0.5); }
+    label.check { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--fg); }
+    a.link { color: var(--fg-muted); font-size: 12px; cursor: pointer; text-decoration: underline; }
+    .chat-box { display: flex; flex-direction: column; gap: 6px; }
+    .chat-msgs { max-height: 130px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; padding: 8px; border-radius: 9px; background: #09090b; border: 1px solid var(--border); }
+    .chat-msg { max-width: 82%; padding: 5px 9px; border-radius: 9px; font-size: 12px; line-height: 1.4; background: var(--card-hover); color: var(--fg); align-self: flex-start; }
+    .chat-msg.me { align-self: flex-end; background: #fafafa; color: #09090b; font-weight: 500; }
+    .quick-row { display: flex; flex-wrap: wrap; gap: 5px; }
+  </style>
+  <script type="module" crossorigin src="./assets/store-DPNlipQE.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="modulepreload" crossorigin href="./assets/catalog-CHB2dxSJ.js">
+  <link rel="stylesheet" crossorigin href="./assets/dialog-DA0NrzqE.css">
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <img class="mark" src="./icons/mark.svg" alt="">
+      <span class="title">桌面生态</span>
+      <button class="close" id="closeBtn" title="关闭" aria-label="关闭">✕</button>
+    </div>
+    <div class="tabs">
+      <button class="tab on" data-tab="shop">造景与鱼皮</button>
+      <button class="tab" data-tab="friends">鱼友串门<i id="reqDot" hidden></i></button>
+      <button class="tab" data-tab="me">账号与隐私</button>
+    </div>
+
+    <div class="pane scroll" data-pane="shop">
+      <div class="bundle" id="bundleBox">
+        <div class="grow"><b id="bundleTitle"></b><span id="bundleSub"></span></div>
+        <button class="btn" id="bundleBtn"></button>
+      </div>
+      <div class="sec-head"><span>3D 生态造景</span><span class="sub">支持免费试看 15 秒</span></div>
+      <div class="grid" id="themeGrid"></div>
+      <div class="sec-head"><span>精雕主鱼皮肤</span><span class="sub">支持免费试穿 15 秒</span></div>
+      <div class="skin-grid" id="skinGrid"></div>
+      <div class="box" id="screensaverBox"></div>
+      <div class="box">
+        <h4>兑换码激活</h4>
+        <div class="row">
+          <input class="grow" type="text" id="codeInput" placeholder="OASIS-XXX-XXXX-XXXX-XXXX" maxlength="40" spellcheck="false">
+          <button class="btn" id="redeemBtn">兑换</button>
+        </div>
+        <div class="sub">用户 ID：<code id="uidInline"></code></div>
+      </div>
+    </div>
+
+    <div class="pane scroll" data-pane="friends" hidden>
+      <div class="box">
+        <div class="row"><span class="sub">我的 ID</span><code id="myCode"></code><button class="btn small ghost" id="copyCode">复制</button><button class="btn small ghost" id="copyInvite">邀请语</button></div>
+        <div class="row">
+          <input class="grow" type="text" id="friendInput" placeholder="输入好友 ID (DO-XXXXXX)" maxlength="15" spellcheck="false">
+          <button class="btn" id="addFriendBtn">添加</button>
+        </div>
+      </div>
+      <div class="box" id="reqBox" hidden><h4>新的鱼友申请</h4><div id="reqList"></div></div>
+      <div class="box"><div class="row" style="justify-content:space-between;align-items:center;"><h4 id="friendTitle">鱼友</h4><button class="btn small ghost" id="peekVisitBtn" hidden>看看 TA 的缸</button></div><div id="friendList" style="display:flex;flex-direction:column;gap:6px;"></div></div>
+      <div class="box chat-box" id="chatBox" hidden>
+        <div class="row" style="justify-content:space-between;align-items:center;">
+          <h4 id="chatTitle">水泡聊天</h4>
+          <button class="btn small ghost" id="closeChatBtn">收起</button>
+        </div>
+        <div class="chat-msgs scroll" id="chatMsgs"></div>
+        <div class="quick-row">
+          <button class="btn small ghost" data-kind="poke">戳一戳</button>
+          <button class="btn small ghost" data-kind="feed">帮喂鱼</button>
+          <button class="btn small ghost" data-kind="clean">帮擦缸</button>
+          <button class="btn small ghost" data-kind="heart">送气泡</button>
+          <button class="btn small ghost" data-kind="plane">纸飞机</button>
+        </div>
+        <div class="row">
+          <input class="grow" type="text" id="chatInput" placeholder="限 20 字内…" maxlength="20">
+          <button class="btn small" id="chatSendBtn">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane scroll" data-pane="me" hidden>
+      <div class="box">
+        <h4>我的资料</h4>
+        <div class="row"><span class="sub">用户 ID</span><code id="uid"></code><button class="btn small ghost" id="copyUid">复制</button></div>
+        <input type="text" id="nickInput" placeholder="昵称（鱼友可见）" maxlength="16">
+        <select id="breedInput" aria-label="主鱼形象与串门皮肤">
+          <option value="goldfish">我的主鱼：丹霞琉金</option>
+        </select>
+        <input type="text" id="accountInput" placeholder="联系方式（选填，换机找回辅助）" maxlength="48">
+        <button class="btn" id="saveProfile">保存</button>
+      </div>
+      <div class="box">
+        <h4>换机恢复码</h4>
+        <div class="row">
+          <button class="btn small ghost" id="copyRecoveryBtn">复制恢复码</button>
+          <input class="grow" type="text" id="recoveryInput" placeholder="粘贴 DO-RECOVERY-…" spellcheck="false">
+          <button class="btn small" id="importRecoveryBtn">导入</button>
+        </div>
+      </div>
+      <div class="box">
+        <h4>隐私设置</h4>
+        <label class="check"><input type="checkbox" id="allowReq"> 允许通过 ID 加我好友</label>
+        <label class="check"><input type="checkbox" id="cloudOn"> 开启云同步（权益找回与串门）</label>
+        <div class="row"><button class="btn small danger" id="deleteCloud">清除云端数据</button><a class="link" id="siteLink">官网与隐私说明</a></div>
+      </div>
+      <div class="sub" id="verText"></div>
+    </div>
+
+    <div class="tip" id="tip"></div>
+  </div>
+</body>
+</html>
